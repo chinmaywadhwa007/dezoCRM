@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, QrCode } from 'lucide-react';
+import { openDezoAI } from '../ai/DezoAIWidget';
 
 export const FinalCTABanner: React.FC = () => {
   return (
@@ -30,19 +31,22 @@ export const FinalCTABanner: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </motion.a>
 
-            {/* QR Code Container */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs">
-              <div className="w-12 h-12 bg-slate-900 text-white flex items-center justify-center rounded-lg">
+            {/* QR Code / Chat Now Container */}
+            <div 
+              onClick={() => openDezoAI()} 
+              className="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-blue-500 transition-colors group"
+            >
+              <div className="w-12 h-12 bg-slate-900 text-white flex items-center justify-center rounded-lg group-hover:bg-blue-600 transition-colors">
                 <QrCode className="w-8 h-8" />
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight font-['Plus_Jakarta_Sans']">
-                  Scan to
+                  Scan or Click
                 </span>
                 <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight font-['Plus_Jakarta_Sans']">
-                  WhatsApp
+                  AI Support
                 </span>
-                <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 mt-0.5">
+                <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 mt-0.5 group-hover:underline">
                   Chat Now
                 </span>
               </div>

@@ -38,6 +38,12 @@ export interface ChatMessage {
   cta?: { label: string; route?: string; link?: string; onClick?: () => void };
 }
 
+export const openDezoAI = (query?: string) => {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('open-dezo-ai', { detail: { query } }));
+  }
+};
+
 export const DezoAIWidget: React.FC = () => {
   const { navigateTo } = useNavigation();
   const [mounted, setMounted] = useState(false);
@@ -76,6 +82,20 @@ export const DezoAIWidget: React.FC = () => {
       observer.disconnect();
       window.removeEventListener('resize', handleResize);
     };
+  }, []);
+
+  // Listen for open-dezo-ai global trigger events across the app
+  useEffect(() => {
+    const handleOpenAI = (e: Event) => {
+      setIsOpen(true);
+      const detail = (e as CustomEvent)?.detail;
+      if (detail?.query) {
+        handleSendMessage(detail.query);
+      }
+    };
+
+    window.addEventListener('open-dezo-ai', handleOpenAI);
+    return () => window.removeEventListener('open-dezo-ai', handleOpenAI);
   }, []);
 
   const toggleWidgetTheme = () => {

@@ -9,6 +9,7 @@ import {
   ShieldCheck, 
   Bot 
 } from 'lucide-react';
+import { openDezoAI } from '../ai/DezoAIWidget';
 
 export const StatsBanner: React.FC = () => {
   const stats = [
@@ -74,13 +75,16 @@ export const StatsBanner: React.FC = () => {
 
         {/* Far Right: AI Assistant Badge */}
         <div className="xl:pl-8 border-t xl:border-t-0 xl:border-l border-slate-200/80 dark:border-slate-800 flex items-center gap-4 sm:gap-6 w-full xl:w-auto justify-between xl:justify-start pt-6 xl:pt-0 shrink-0">
-          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 relative shrink-0">
+          <div 
+            onClick={() => openDezoAI()} 
+            className="flex items-center gap-3 sm:gap-4 min-w-0 cursor-pointer group"
+          >
+            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 relative shrink-0 group-hover:scale-105 transition-transform">
               <Bot className="w-6 h-6 sm:w-7 sm:h-7" />
               <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 border-2 border-white dark:border-slate-900 rounded-full" />
             </div>
             <div className="flex flex-col text-left min-w-0">
-              <span className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans'] flex items-center gap-1.5 truncate">
+              <span className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans'] flex items-center gap-1.5 truncate group-hover:text-blue-500 transition-colors">
                 AI Assistant
               </span>
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">
@@ -89,7 +93,10 @@ export const StatsBanner: React.FC = () => {
             </div>
           </div>
 
-          <button className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-600/25 hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer whitespace-nowrap shrink-0">
+          <button 
+            onClick={() => openDezoAI()}
+            className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-600/25 hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer whitespace-nowrap shrink-0"
+          >
             Chat Now
           </button>
         </div>
