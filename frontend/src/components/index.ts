@@ -13,3 +13,5 @@ export * from './contact/ContactSalesPage';
 export * from './pricing/PricingPage';
 export * from './footer';
 export * from './background';
+export * from './ai/DezoAIWidget';
+

@@ -18,7 +18,8 @@ import {
   TrustAndWhySection,
   BottomFeatureStrip,
   FinalCTABanner,
-  Footer
+  Footer,
+  DezoAIWidget
 } from './components';
 
 export const App: React.FC = () => {
@@ -66,7 +67,7 @@ export const App: React.FC = () => {
 
   return (
     <NavigationContext.Provider value={{ currentRoute, activeSection, navigateTo }}>
-      <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-white text-slate-800'} relative selection:bg-cyan-500 selection:text-white font-['Plus_Jakarta_Sans',sans-serif] overflow-x-clip transition-colors duration-300 transform-gpu`}>
+      <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-white text-slate-800'} relative selection:bg-cyan-500 selection:text-white font-['Plus_Jakarta_Sans',sans-serif] overflow-x-clip transition-colors duration-300`}>
 
         {/* Ambient background particles & lighting */}
         <BackgroundParticles />
@@ -183,6 +184,9 @@ export const App: React.FC = () => {
 
         {/* 14. Footer */}
         <Footer />
+
+        {/* 15. Floating DezoAI Help & Support Widget */}
+        <DezoAIWidget />
       </div>
     </NavigationContext.Provider>
   );
