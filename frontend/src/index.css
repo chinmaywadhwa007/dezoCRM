@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer utilities {
 
@@ -33,7 +33,7 @@
     transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-8px) rotate(1deg);
+    transform: translateY(-10px) rotate(1.5deg);
   }
 }
 
@@ -49,11 +49,15 @@
 }
 
 .animate-float-slow {
-  animation: floatSlow 6s ease-in-out infinite;
+  animation: floatSlow 3s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: floatSlow 1.8s ease-in-out infinite;
 }
 
 .animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
+  animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
 /* Three.js canvas container reset */

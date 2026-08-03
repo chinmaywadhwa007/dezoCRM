@@ -433,9 +433,9 @@ export const DezoAIWidget: React.FC = () => {
             }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{
-              y: { duration: 7, repeat: Infinity, ease: 'easeInOut' },
-              x: { duration: 8, repeat: Infinity, ease: 'easeInOut' },
-              rotate: { duration: 6, repeat: Infinity, ease: 'easeInOut' },
+              y: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' },
+              x: { duration: 3.6, repeat: Infinity, ease: 'easeInOut' },
+              rotate: { duration: 2.8, repeat: Infinity, ease: 'easeInOut' },
               opacity: { duration: 0.3 },
               scale: { duration: 0.3 }
             }}
@@ -474,8 +474,8 @@ export const DezoAIWidget: React.FC = () => {
                   isDark ? 'bg-slate-950 group-hover:bg-slate-900' : 'bg-slate-900 group-hover:bg-slate-800'
                 }`}>
                   <motion.div
-                    animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                    animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.08, 0.95, 1] }}
+                    transition={{ duration: 2.0, repeat: Infinity, ease: 'easeInOut' }}
                     className="group-hover:rotate-12 transition-transform duration-300"
                   >
                     <Bot className="w-5 h-5 text-cyan-300 group-hover:scale-110 transition-transform" />

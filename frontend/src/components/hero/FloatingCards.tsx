@@ -106,7 +106,7 @@ export const FloatingCards: React.FC = () => {
             opacity: { duration: 0.5, delay: node.delay },
             scale: { duration: 0.5, delay: node.delay },
             y: {
-              duration: 3.8 + node.delay,
+              duration: 2.0 + node.delay * 0.3,
               repeat: Infinity,
               repeatType: 'mirror',
               ease: 'easeInOut'

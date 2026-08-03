@@ -46,7 +46,7 @@ const PCB_MODULES: PCBModule[] = [
     positionClasses: 'top-[7%] left-[4%]',
     parallaxMultiplier: 0.8,
     floatDelay: 0.0,
-    floatDuration: 5.5,
+    floatDuration: 2.8,
     mainPath: 'M 40 35 L 40 18 L 18 18 L 18 13',
     secondaryPath: 'M 40 18 L 6 18 L 6 32 L 2 32',
     statusText: 'AI Engine • Active 99.9%',
@@ -63,8 +63,8 @@ const PCB_MODULES: PCBModule[] = [
     glowRgb: '59, 130, 246',
     positionClasses: 'top-[7%] right-[4%]',
     parallaxMultiplier: 1.1,
-    floatDelay: 0.8,
-    floatDuration: 6.2,
+    floatDelay: 0.4,
+    floatDuration: 3.2,
     mainPath: 'M 60 35 L 60 18 L 82 18 L 82 13',
     secondaryPath: 'M 60 18 L 94 18 L 94 32 L 98 32',
     statusText: 'Campus OS • Synced',
@@ -81,8 +81,8 @@ const PCB_MODULES: PCBModule[] = [
     glowRgb: '168, 85, 247',
     positionClasses: 'top-[44%] right-[2%]',
     parallaxMultiplier: 1.0,
-    floatDelay: 2.2,
-    floatDuration: 6.5,
+    floatDelay: 1.0,
+    floatDuration: 3.4,
     mainPath: 'M 65 50 L 84 50',
     secondaryPath: 'M 75 50 L 75 36 L 96 36',
     statusText: 'Healthcare • 0ms Latency',
@@ -99,8 +99,8 @@ const PCB_MODULES: PCBModule[] = [
     glowRgb: '16, 185, 129',
     positionClasses: 'bottom-[9%] left-[4%]',
     parallaxMultiplier: 1.2,
-    floatDelay: 3.0,
-    floatDuration: 6.0,
+    floatDelay: 1.4,
+    floatDuration: 3.0,
     mainPath: 'M 40 65 L 40 82 L 18 82 L 18 88',
     secondaryPath: 'M 40 82 L 6 82 L 6 68 L 2 68',
     statusText: 'HR Suite • Secure',
@@ -117,8 +117,8 @@ const PCB_MODULES: PCBModule[] = [
     glowRgb: '245, 158, 11',
     positionClasses: 'bottom-[9%] right-[4%]',
     parallaxMultiplier: 0.75,
-    floatDelay: 3.8,
-    floatDuration: 6.8,
+    floatDelay: 1.8,
+    floatDuration: 3.5,
     mainPath: 'M 60 65 L 60 82 L 82 82 L 82 88',
     secondaryPath: 'M 60 82 L 94 82 L 94 68 L 98 68',
     statusText: 'Stock Engine • Live',
@@ -141,7 +141,7 @@ const SprawlingMotherboardTraces: React.FC = () => {
   }, []);
 
   return (
-    <g className="opacity-25 stroke-cyan-500/40 dark:stroke-cyan-400/30" strokeWidth="0.5" fill="none">
+    <g className="opacity-45 dark:opacity-25 stroke-emerald-600/50 dark:stroke-cyan-400/30" strokeWidth="0.5" fill="none">
       <path d="M 2 5 L 98 5 M 2 8 L 98 8" />
       <path d="M 2 92 L 98 92 M 2 95 L 98 95" />
       <path d="M 4 2 L 4 98 M 96 2 L 96 98" />
@@ -323,6 +323,22 @@ export const HeroEarth3D: React.FC = () => {
   const isProcessorHoveredRef = useRef(false);
   const [cardPulseActive, setCardPulseActive] = useState(false);
   const cycleIndex = useRef(0);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    const checkDark = () => {
+      setIsDarkTheme(
+        document.documentElement.classList.contains('dark') ||
+        document.body.classList.contains('dark') ||
+        Boolean(document.querySelector('.dark'))
+      );
+    };
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    if (document.body) observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   // Keep ref in sync with state for zero-rerender rAF loop
   useEffect(() => {
@@ -440,23 +456,23 @@ export const HeroEarth3D: React.FC = () => {
         perspective: '1200px',
         willChange: 'transform',
       }}
-      className="w-full h-[420px] sm:h-[520px] lg:h-[600px] relative overflow-hidden bg-slate-950 dark:bg-[#020612] rounded-[24px] border border-slate-800 dark:border-blue-950/80 shadow-xl shadow-blue-900/10 dark:shadow-cyan-950/40 select-none font-sans flex items-center justify-center cursor-default transition-colors duration-500"
+      className="w-full h-[420px] sm:h-[520px] lg:h-[600px] relative overflow-hidden bg-gradient-to-br from-emerald-50/90 via-teal-50/70 to-cyan-50/90 dark:from-[#020612] dark:via-[#050d24] dark:to-[#020612] rounded-[24px] border border-emerald-200/90 dark:border-blue-950/80 shadow-2xl shadow-emerald-900/10 dark:shadow-cyan-950/40 select-none font-sans flex items-center justify-center cursor-default transition-colors duration-500"
     >
       {/* ── Keyframe Animations for Clockwise Pin Wave ── */}
       <style>{`
         @keyframes pinSequentialPulse {
           0%, 100% {
-            background-color: rgba(148, 163, 184, 0.4);
+            background-color: rgba(16, 185, 129, 0.3);
             box-shadow: none;
             opacity: 0.5;
           }
           15%, 35% {
-            background-color: #00f0ff;
-            box-shadow: 0 0 10px #00f0ff, 0 0 4px #38bdf8;
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981, 0 0 4px #34d399;
             opacity: 1;
           }
           50% {
-            background-color: rgba(148, 163, 184, 0.4);
+            background-color: rgba(16, 185, 129, 0.3);
             box-shadow: none;
             opacity: 0.5;
           }
@@ -478,13 +494,13 @@ export const HeroEarth3D: React.FC = () => {
         {/* ── Background Ambient Backlight Glows (Expands on Processor Hover) ── */}
         <div className="absolute inset-0 pointer-events-none -z-10">
           <div
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/20 blur-[130px] transition-all duration-700 ease-out ${
-              isProcessorHovered ? 'w-[520px] h-[520px] bg-cyan-400/35 blur-[140px]' : 'w-[420px] h-[420px]'
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/25 dark:bg-cyan-400/20 blur-[130px] transition-all duration-700 ease-out ${
+              isProcessorHovered ? 'w-[520px] h-[520px] bg-emerald-400/40 dark:bg-cyan-400/35 blur-[140px]' : 'w-[420px] h-[420px]'
             }`}
           />
           <div
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/20 blur-[90px] transition-all duration-700 ease-out ${
-              isProcessorHovered ? 'w-[320px] h-[320px] bg-blue-500/30' : 'w-[260px] h-[260px]'
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-500/25 dark:bg-blue-600/20 blur-[90px] transition-all duration-700 ease-out ${
+              isProcessorHovered ? 'w-[320px] h-[320px] bg-teal-400/35 dark:bg-blue-500/30' : 'w-[260px] h-[260px]'
             }`}
           />
         </div>
@@ -500,7 +516,7 @@ export const HeroEarth3D: React.FC = () => {
               repeat: Infinity,
               ease: 'linear',
             }}
-            className="w-full h-[60px] bg-gradient-to-b from-transparent via-cyan-400/10 to-transparent blur-sm pointer-events-none"
+            className="w-full h-[60px] bg-gradient-to-b from-transparent via-emerald-400/15 dark:via-cyan-400/10 to-transparent blur-sm pointer-events-none"
           />
         </div>
 
@@ -508,7 +524,7 @@ export const HeroEarth3D: React.FC = () => {
         <FloatingBackgroundParticles isProcessorHovered={isProcessorHovered} />
 
         {/* ── Subtle Background Grid Pattern ── */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-60" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#05966918_1px,transparent_1px),linear-gradient(to_bottom,#05966918_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-70" />
 
         {/* ── SVG MOTHERBOARD PCB TRACES LAYER ── */}
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none z-10">
@@ -528,6 +544,7 @@ export const HeroEarth3D: React.FC = () => {
           {/* ── PERMANENT NEON SVG PCB TRACES WITH MOVING ENERGY PACKETS ── */}
           {PCB_MODULES.map((mod) => {
             const isHighlighted = isProcessorHovered || currentHighlightedId === mod.id;
+            const baseTraceColor = isDarkTheme ? '#00f0ff' : '#10b981';
 
             return (
               <g key={mod.id}>
@@ -535,16 +552,16 @@ export const HeroEarth3D: React.FC = () => {
                 <path
                   d={mod.mainPath}
                   fill="none"
-                  stroke={isHighlighted ? mod.accentColor : '#00f0ff'}
+                  stroke={isHighlighted ? mod.accentColor : baseTraceColor}
                   strokeWidth={isProcessorHovered ? '1.8' : isHighlighted ? '1.4' : '0.8'}
                   strokeOpacity={isHighlighted ? '1' : '0.75'}
                   className="transition-colors duration-500"
                   style={{
                     filter: isProcessorHovered
-                      ? 'drop-shadow(0 0 8px #00f0ff)'
+                      ? `drop-shadow(0 0 8px ${baseTraceColor})`
                       : isHighlighted
                       ? `drop-shadow(0 0 5px ${mod.accentColor})`
-                      : 'drop-shadow(0 0 2px #00f0ff)',
+                      : `drop-shadow(0 0 2px ${baseTraceColor})`,
                   }}
                 />
 
@@ -552,7 +569,7 @@ export const HeroEarth3D: React.FC = () => {
                 <path
                   d={mod.secondaryPath}
                   fill="none"
-                  stroke={isHighlighted ? mod.accentColor : '#00f0ff'}
+                  stroke={isHighlighted ? mod.accentColor : baseTraceColor}
                   strokeWidth="0.5"
                   strokeOpacity={isHighlighted ? '0.85' : '0.45'}
                   className="transition-colors duration-500"
@@ -562,7 +579,7 @@ export const HeroEarth3D: React.FC = () => {
                 <path
                   d={mod.mainPath}
                   fill="none"
-                  stroke={isProcessorHovered ? '#ffffff' : isHighlighted ? mod.accentColor : '#00f0ff'}
+                  stroke={isProcessorHovered ? '#ffffff' : isHighlighted ? mod.accentColor : baseTraceColor}
                   strokeWidth={isProcessorHovered ? '2.2' : '1.2'}
                   strokeDasharray={isProcessorHovered ? '4 12' : '2 7'}
                   filter="url(#pcbGlow)"
@@ -593,13 +610,13 @@ export const HeroEarth3D: React.FC = () => {
           onMouseEnter={() => setIsProcessorHovered(true)}
           onMouseLeave={() => setIsProcessorHovered(false)}
         >
-          {/* Subtle 4px Floating Levitation */}
+          {/* Subtle 6px Floating Levitation */}
           <motion.div
             animate={{
-              y: [0, -4, 0],
+              y: [0, -6, 0],
             }}
             transition={{
-              duration: 6.0,
+              duration: 2.8,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
@@ -609,27 +626,27 @@ export const HeroEarth3D: React.FC = () => {
             {/* 32 Metallic Pins with Clockwise Sequential Lighting */}
             <ProcessorPins isHovered={isProcessorHovered} />
 
-            {/* Heatsink Frame with Premium Soft Cyan Glow */}
+            {/* Heatsink Frame with Premium Glow */}
             <div
-              className={`w-full h-full rounded-[28px] p-2.5 bg-gradient-to-br from-[#102046] via-[#09152e] to-[#040a17] border-2 relative overflow-hidden backdrop-blur-2xl flex items-center justify-center cursor-pointer group transition-all duration-600 ease-out ${
+              className={`w-full h-full rounded-[28px] p-2.5 bg-gradient-to-br from-white via-emerald-50/80 to-teal-50/90 dark:from-[#102046] dark:via-[#09152e] dark:to-[#040a17] border-2 relative overflow-hidden backdrop-blur-2xl flex items-center justify-center cursor-pointer group transition-all duration-600 ease-out ${
                 isProcessorHovered
-                  ? 'border-cyan-400 shadow-[0_0_65px_rgba(0,240,255,0.75),0_0_20px_rgba(0,240,255,0.4),inset_0_0_30px_rgba(0,240,255,0.45)]'
-                  : 'border-cyan-400/80 shadow-[0_0_30px_rgba(0,240,255,0.35),inset_0_0_15px_rgba(0,240,255,0.2)]'
+                  ? 'border-emerald-500 dark:border-cyan-400 shadow-[0_0_50px_rgba(16,185,129,0.5),0_0_20px_rgba(16,185,129,0.3)] dark:shadow-[0_0_65px_rgba(0,240,255,0.75),0_0_20px_rgba(0,240,255,0.4),inset_0_0_30px_rgba(0,240,255,0.45)]'
+                  : 'border-emerald-500/70 dark:border-cyan-400/80 shadow-[0_10px_35px_rgba(16,185,129,0.2),inset_0_0_15px_rgba(16,185,129,0.15)] dark:shadow-[0_0_30px_rgba(0,240,255,0.35),inset_0_0_15px_rgba(0,240,255,0.2)]'
               }`}
             >
               {/* Rotating Holographic Ring (Speeds up on hover) */}
               <div
-                className={`absolute inset-2 rounded-[22px] border border-dashed border-cyan-400/50 pointer-events-none transition-all duration-500 ${
+                className={`absolute inset-2 rounded-[22px] border border-dashed border-emerald-500/60 dark:border-cyan-400/50 pointer-events-none transition-all duration-500 ${
                   isProcessorHovered ? 'animate-[spin_15s_linear_infinite]' : 'animate-[spin_45s_linear_infinite]'
                 }`}
               />
 
               {/* Center AI Core */}
-              <div className="w-full h-full rounded-[20px] bg-gradient-to-br from-[#07132e] via-[#030b1c] to-[#01050e] border border-cyan-400/50 flex flex-col items-center justify-center relative overflow-hidden group-hover:scale-102 transition-transform duration-500 ease-out">
-                <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-cyan-400" />
-                <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-cyan-400" />
-                <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-cyan-400" />
-                <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-cyan-400" />
+              <div className="w-full h-full rounded-[20px] bg-gradient-to-br from-slate-900 via-emerald-950 to-teal-950 dark:from-[#07132e] dark:via-[#030b1c] dark:to-[#01050e] border border-emerald-500/60 dark:border-cyan-400/50 flex flex-col items-center justify-center relative overflow-hidden group-hover:scale-102 transition-transform duration-500 ease-out shadow-lg">
+                <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-emerald-400 dark:border-cyan-400" />
+                <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-emerald-400 dark:border-cyan-400" />
+                <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-emerald-400 dark:border-cyan-400" />
+                <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-emerald-400 dark:border-cyan-400" />
 
                 {/* Center Icon (Rotates 360° linearly on hover, scales to 1.05) */}
                 <motion.div
@@ -643,19 +660,19 @@ export const HeroEarth3D: React.FC = () => {
                       : { duration: 0.6, ease: 'easeOut' },
                     scale: { type: 'spring', stiffness: 300, damping: 20 },
                   }}
-                  className={`w-14 h-14 rounded-full bg-cyan-500/15 border border-cyan-400/60 flex items-center justify-center relative transition-shadow duration-500 ${
+                  className={`w-14 h-14 rounded-full bg-emerald-500/15 dark:bg-cyan-500/15 border border-emerald-400/60 dark:border-cyan-400/60 flex items-center justify-center relative transition-shadow duration-500 ${
                     isProcessorHovered
-                      ? 'shadow-[0_0_28px_#00f0ff,inset_0_0_12px_#00f0ff]'
-                      : 'shadow-[0_0_20px_#00f0ff]'
+                      ? 'shadow-[0_0_28px_#10b981] dark:shadow-[0_0_28px_#00f0ff,inset_0_0_12px_#00f0ff]'
+                      : 'shadow-[0_0_20px_#10b981] dark:shadow-[0_0_20px_#00f0ff]'
                   }`}
                 >
-                  <Cpu className="w-7 h-7 text-cyan-400" />
+                  <Cpu className="w-7 h-7 text-emerald-400 dark:text-cyan-400" />
                 </motion.div>
 
-                <span className="text-lg font-black tracking-widest text-white mt-1 drop-shadow-[0_0_10px_#00f0ff]">
+                <span className="text-lg font-black tracking-widest text-white mt-1 drop-shadow-[0_0_10px_#10b981] dark:drop-shadow-[0_0_10px_#00f0ff]">
                   AI
                 </span>
-                <span className="text-[8.5px] font-bold text-cyan-400 tracking-wider uppercase opacity-85">
+                <span className="text-[8.5px] font-bold text-emerald-400 dark:text-cyan-400 tracking-wider uppercase opacity-85">
                   PROCESSOR
                 </span>
               </div>
@@ -688,9 +705,9 @@ export const HeroEarth3D: React.FC = () => {
                       animate={{ opacity: 1, y: -24, scale: 1 }}
                       exit={{ opacity: 0, y: 4, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute left-1/2 -translate-x-1/2 top-0 px-2.5 py-1 rounded-lg bg-slate-950/95 border border-cyan-400/60 text-[10px] font-bold text-cyan-300 shadow-lg shadow-cyan-950/80 whitespace-nowrap flex items-center gap-1.5 pointer-events-none z-40"
+                      className="absolute left-1/2 -translate-x-1/2 top-0 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-slate-950/95 border border-emerald-500/60 dark:border-cyan-400/60 text-[10px] font-bold text-emerald-700 dark:text-cyan-300 shadow-xl shadow-emerald-500/15 dark:shadow-cyan-950/80 whitespace-nowrap flex items-center gap-1.5 pointer-events-none z-40"
                     >
-                      <CheckCircle className="w-3 h-3 text-cyan-400" />
+                      <CheckCircle className="w-3 h-3 text-emerald-500 dark:text-cyan-400" />
                       <span>{mod.statusText}</span>
                     </motion.div>
                   )}
@@ -712,7 +729,7 @@ export const HeroEarth3D: React.FC = () => {
                     setActiveModuleId(mod.id);
                   }}
                   onMouseLeave={() => setHoveredModuleId(null)}
-                  className="w-[185px] sm:w-[195px] h-[64px] px-3.5 py-2.5 rounded-2xl bg-slate-900/90 dark:bg-[#070e20]/95 border backdrop-blur-xl flex items-center gap-2.5 cursor-pointer transition-colors duration-300"
+                  className="w-[185px] sm:w-[195px] h-[64px] px-3.5 py-2.5 rounded-2xl bg-white/95 dark:bg-[#070e20]/95 border border-slate-200/90 dark:border-slate-800/80 backdrop-blur-xl flex items-center gap-2.5 cursor-pointer transition-colors duration-300 shadow-[0_8px_25px_-5px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_18px_rgba(0,0,0,0.4)]"
                   style={{
                     borderColor: isHovered
                       ? mod.accentColor
@@ -727,7 +744,7 @@ export const HeroEarth3D: React.FC = () => {
                       ? '0 0 24px rgba(0, 240, 255, 0.55), inset 0 0 8px rgba(0, 240, 255, 0.25)'
                       : isHighlighted
                       ? `0 0 18px rgba(${mod.glowRgb}, 0.35)`
-                      : `0 4px 18px rgba(0, 0, 0, 0.4)`,
+                      : undefined,
                     filter: isProcessorHovered && cardPulseActive ? 'brightness(1.12)' : 'brightness(1)',
                     willChange: 'transform, border-color, box-shadow, filter',
                   }}
@@ -743,7 +760,7 @@ export const HeroEarth3D: React.FC = () => {
                   </div>
 
                   <div className="flex flex-col text-left min-w-0 flex-1">
-                    <span className="text-[12.5px] font-extrabold text-white leading-tight truncate">
+                    <span className="text-[12.5px] font-extrabold text-slate-900 dark:text-white leading-tight truncate">
                       {mod.title}
                     </span>
                     <span
