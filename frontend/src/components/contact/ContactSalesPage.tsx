@@ -24,7 +24,7 @@ export const ContactSalesPage: React.FC = () => {
     industry: 'Software / Technology',
     employees: '100-500 Employees',
     budget: '$25k - $50k / year',
-    productInterest: 'DezoCRM Enterprise Platform',
+    productInterest: 'Dezoryn Technologies Enterprise Platform',
     requirements: ''
   });
 

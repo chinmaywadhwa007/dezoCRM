@@ -34,7 +34,7 @@ const productModules: ProductModule[] = [
     title: 'AI Predictive Lead Intelligence',
     badge: 'CORE MODULE',
     shortDesc: 'Automatically score, prioritize, and route high-intent leads using machine learning.',
-    longDesc: 'DezoCRM Sales Intelligence evaluates over 50+ real-time behavioral signals, buyer intent data, and firmographics to score leads with unmatched precision.',
+    longDesc: 'Dezoryn Technologies Sales Intelligence evaluates over 50+ real-time behavioral signals, buyer intent data, and firmographics to score leads with unmatched precision.',
     icon: <Zap className="w-6 h-6 text-blue-600 dark:text-cyan-400" />,
     color: 'text-blue-600 dark:text-cyan-400',
     accentBg: 'bg-blue-50 dark:bg-cyan-500/10 border-blue-200 dark:border-cyan-500/30',
@@ -76,7 +76,7 @@ const productModules: ProductModule[] = [
     title: 'Predictive Revenue & Funnel Analytics',
     badge: 'ANALYTICS',
     shortDesc: '360-degree pipeline visibility with AI-driven quarterly revenue predictions.',
-    longDesc: 'Stop relying on guesswork. DezoCRM provides real-time pipeline health tracking, quota attainment forecasts, and stage conversion analytics.',
+    longDesc: 'Stop relying on guesswork. Dezoryn Technologies provides real-time pipeline health tracking, quota attainment forecasts, and stage conversion analytics.',
     icon: <TrendingUp className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
     color: 'text-emerald-600 dark:text-emerald-400',
     accentBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30',
@@ -177,16 +177,16 @@ export const ProductsPage: React.FC = () => {
 
   const faqs = [
     {
-      q: 'Can DezoCRM integrate with our existing stack (Salesforce, HubSpot)?',
-      a: 'Yes! DezoCRM offers 1-click bi-directional synchronization with Salesforce, HubSpot, Zendesk, Slack, PostgreSQL, and 2,000+ apps via Zapier and custom webhooks.'
+      q: 'Can Dezoryn Technologies integrate with our existing stack (Salesforce, HubSpot)?',
+      a: 'Yes! Dezoryn Technologies offers 1-click bi-directional synchronization with Salesforce, HubSpot, Zendesk, Slack, PostgreSQL, and 2,000+ apps via Zapier and custom webhooks.'
     },
     {
-      q: 'How does DezoCRM AI train on our lead data?',
-      a: 'DezoCRM uses privacy-first, isolated ML models. Your customer data is never shared across tenants or used to train global public LLMs.'
+      q: 'How does Dezoryn Technologies AI train on our lead data?',
+      a: 'Dezoryn Technologies uses privacy-first, isolated ML models. Your customer data is never shared across tenants or used to train global public LLMs.'
     },
     {
       q: 'What is the deployment timeline for enterprise teams?',
-      a: 'Standard deployment takes under 48 hours. Our solutions engineering team provides full migration assistance from legacy CRMs with zero downtime.'
+      a: 'Standard deployment takes under 48 hours. Our solutions engineering team provides full migration assistance from legacy systems with zero downtime.'
     }
   ];
 
@@ -205,7 +205,7 @@ export const ProductsPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-cyan-500/10 border border-blue-200 dark:border-cyan-400/30 text-xs font-extrabold text-blue-600 dark:text-cyan-400 mb-4"
           >
             <Sparkles className="w-4 h-4 text-blue-600 dark:text-cyan-400 animate-pulse" />
-            <span>DEZOCRM ENTERPRISE PRODUCT SUITE</span>
+            <span>DEZORYN TECHNOLOGIES ENTERPRISE PRODUCT SUITE</span>
           </motion.div>
 
           <motion.h1
@@ -351,7 +351,7 @@ export const ProductsPage: React.FC = () => {
               <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-900 p-4 shadow-xl aspect-video relative overflow-hidden group">
                 <img 
                   src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80"
-                  alt="DezoCRM Predictive Dashboard"
+                  alt="Dezoryn Technologies Predictive Dashboard"
                   className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
@@ -424,7 +424,7 @@ export const ProductsPage: React.FC = () => {
         <div className="max-w-3xl mx-auto mb-20">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">Product FAQs</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Common questions about DezoCRM deployment</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Common questions about Dezoryn Technologies deployment</p>
           </div>
 
           <div className="space-y-3">
@@ -456,7 +456,7 @@ export const ProductsPage: React.FC = () => {
             Accelerate Your Sales Revenue Engine
           </h2>
           <p className="text-base text-blue-100 max-w-2xl mx-auto mb-8 font-normal">
-            Join hundreds of enterprise sales teams using DezoCRM to score leads, automate cadences, and close deals faster.
+            Join hundreds of enterprise sales teams using Dezoryn Technologies to score leads, automate cadences, and close deals faster.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button

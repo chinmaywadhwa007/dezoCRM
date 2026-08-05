@@ -37,7 +37,7 @@ interface ProductPricing {
 const marketplacePricingData: ProductPricing[] = [
   {
     id: 'dezocrm',
-    name: 'DezoCRM Sales',
+    name: 'Dezoryn Sales',
     badge: 'CRM PLATFORM',
     icon: <Zap className="w-5 h-5 text-blue-600 dark:text-cyan-400" />,
     color: 'text-blue-600 dark:text-cyan-400',
@@ -342,7 +342,7 @@ export const PricingPage: React.FC = () => {
     },
     {
       q: 'Is there a free trial available for each marketplace module?',
-      a: 'Yes, we offer a 14-day full-featured free trial for DezoCRM, SchoolyCore, HMS, HRMS, and InventoryPro with no credit card required.'
+      a: 'Yes, we offer a 14-day full-featured free trial for Dezoryn Technologies, SchoolyCore, HMS, HRMS, and InventoryPro with no credit card required.'
     },
     {
       q: 'How does the 20% annual discount work?',

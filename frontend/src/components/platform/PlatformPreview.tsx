@@ -29,7 +29,7 @@ const tabs: FeatureTab[] = [
     subtitle: 'Lead scoring & deal velocity',
     icon: <Zap className="w-5 h-5" />,
     tag: 'INTELLIGENCE',
-    description: 'DezoCRM analyzes millions of historical sales signals to accurately predict conversion rates, prioritize high-value leads, and identify win-chance bottlenecks in real time.',
+    description: 'Dezoryn Technologies analyzes millions of historical sales signals to accurately predict conversion rates, prioritize high-value leads, and identify win-chance bottlenecks in real time.',
     highlights: [
       'Automated Lead Qualification & Opportunity Scoring',
       'AI Win Probability & Risk Detection',
@@ -220,7 +220,7 @@ export const PlatformPreview: React.FC = () => {
                 </p>
               </div>
               <div className="pt-6 border-t border-white/20 flex items-center justify-between text-xs text-blue-100 font-semibold">
-                <span>DezoCRM Benchmark</span>
+                <span>Dezoryn Technologies Benchmark</span>
                 <span className="flex items-center gap-1 text-white">
                   Live Enterprise Data
                 </span>

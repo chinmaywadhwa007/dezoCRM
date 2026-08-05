@@ -3,6 +3,7 @@ export * from './hero';
 export * from './stats';
 export * from './about';
 export * from './marketplace/MarketplaceSection';
+export * from './careers/CareersSection';
 export * from './middle/MiddleGridSection';
 export * from './trust/TrustAndWhySection';
 export * from './bottom/BottomFeatureStrip';

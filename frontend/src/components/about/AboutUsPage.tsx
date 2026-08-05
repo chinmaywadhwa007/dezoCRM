@@ -47,7 +47,7 @@ export const AboutUsPage: React.FC = () => {
     { year: '2021', title: 'Company Founded', desc: 'Started with a vision to eliminate manual sales data entry with predictive AI.' },
     { year: '2023', title: 'Product Suite Expansion', desc: 'Launched SchoolyCore ERP and Hospitality HMS modules serving 200+ clients.' },
     { year: '2025', title: 'SOC2 & Global Compliance', desc: 'Achieved bank-grade SOC2 Type II certification and expanded offices to London & Singapore.' },
-    { year: '2026', title: 'Enterprise AI Core', desc: 'Released the DezoCRM 3.0 Real-Time AI Lead Intelligence & Cadence Engine.' }
+    { year: '2026', title: 'Enterprise AI Core', desc: 'Released the Dezoryn Technologies 3.0 Real-Time AI Lead Intelligence & Cadence Engine.' }
   ];
 
   const leadership = [
@@ -92,7 +92,7 @@ export const AboutUsPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-400/30 text-xs font-extrabold text-blue-600 dark:text-cyan-400 mb-4"
           >
             <Sparkles className="w-4 h-4 text-blue-600 dark:text-cyan-400 animate-pulse" />
-            <span>THE DEZOCRM STORY & MISSION</span>
+            <span>THE DEZORYN TECHNOLOGIES STORY & MISSION</span>
           </motion.div>
 
           <motion.h1
@@ -111,7 +111,7 @@ export const AboutUsPage: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 font-normal"
           >
-            DezoCRM delivers next-generation predictive CRM, SchoolyCore ERP, Hospitality HMS, and Inventory management software designed for international scale.
+            Dezoryn Technologies delivers next-generation predictive CRM, SchoolyCore ERP, Hospitality HMS, and Inventory management software designed for international scale.
           </motion.p>
 
           {/* Related Pages Action Buttons */}
@@ -214,7 +214,7 @@ export const AboutUsPage: React.FC = () => {
         <div className="mb-20">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-xs font-extrabold tracking-wider text-blue-600 dark:text-cyan-400 uppercase">EXECUTIVE LEADERSHIP</span>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Meet the Minds Behind DezoCRM</h3>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Meet the Minds Behind Dezoryn Technologies</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -237,7 +237,7 @@ export const AboutUsPage: React.FC = () => {
             Ready to Explore Our Enterprise Products?
           </h2>
           <p className="text-base text-blue-100 max-w-2xl mx-auto mb-8 font-normal">
-            Take a personalized tour of DezoCRM, SchoolyCore, HMS, and InventoryPro with our engineering team.
+            Take a personalized tour of Dezoryn Technologies, SchoolyCore, HMS, and InventoryPro with our engineering team.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button

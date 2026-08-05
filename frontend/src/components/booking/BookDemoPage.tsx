@@ -37,7 +37,7 @@ export const BookDemoPage: React.FC = () => {
   const [selectedTimeZone, setSelectedTimeZone] = useState<string>('EST (UTC-5)');
 
   // Form State
-  const [productSelected, setProductSelected] = useState<string>('DezoCRM Sales Intelligence');
+  const [productSelected, setProductSelected] = useState<string>('Dezoryn Technologies Sales Intelligence');
   const [teamSize, setTeamSize] = useState<string>('10-50');
   const [expectedUsers, setExpectedUsers] = useState<string>('25');
   
@@ -682,11 +682,11 @@ export const BookDemoPage: React.FC = () => {
                         onChange={(e) => setProductSelected(e.target.value)}
                         className="w-full px-3 py-3 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 focus:border-blue-600 dark:focus:border-cyan-400 focus:outline-none"
                       >
-                        <option>DezoCRM Sales Intelligence</option>
+                        <option>Dezoryn Technologies Sales Intelligence</option>
                         <option>SchoolyCore ERP</option>
                         <option>Hospitality HMS</option>
                         <option>InventoryPro Suite</option>
-                        <option>Entire Dezo Ecosystem</option>
+                        <option>Entire Dezoryn Ecosystem</option>
                       </select>
                     </div>
 

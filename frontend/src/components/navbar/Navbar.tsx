@@ -19,7 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems: { name: string; route: AppRoute; sectionId?: string }[] = [
     { name: 'Home', route: '/' },
     { name: 'Products', route: '/products' },
-    { name: 'Marketplace', route: '/', sectionId: 'marketplace' },
+    { name: 'Careers', route: '/careers' },
     { name: 'Pricing', route: '/pricing' },
     { name: 'About Us', route: '/about' },
     { name: 'Contact Sales', route: '/contact-sales' },
@@ -59,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div className="flex flex-col text-left">
             <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">
-              Dezo<span className="text-blue-600">CRM</span>
+              Dezoryn <span className="text-blue-600">Technologies</span>
             </span>
             <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 tracking-wider mt-1 uppercase">
               Predictive Sales Platform

@@ -134,7 +134,7 @@ export const MiddleGridSection: React.FC = () => {
                 />
                 <select className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:border-blue-600 focus:outline-none">
                   <option>Select Product</option>
-                  <option>DezoCRM Sales</option>
+                  <option>Dezoryn Sales</option>
                   <option>SchoolyCore</option>
                   <option>HMS</option>
                   <option>HRMS</option>

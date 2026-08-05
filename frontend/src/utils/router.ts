@@ -1,12 +1,13 @@
-export type AppRoute = '/' | '/products' | '/book-demo' | '/contact-sales' | '/about' | '/pricing';
+export type AppRoute = '/' | '/products' | '/book-demo' | '/contact-sales' | '/about' | '/pricing' | '/careers';
 
 export const getRouteFromPath = (path: string): AppRoute => {
-  const cleanPath = path.toLowerCase().replace(/\/$/, '') || '/';
-  if (cleanPath === '/products') return '/products';
-  if (cleanPath === '/book-demo' || cleanPath === '/demo') return '/book-demo';
-  if (cleanPath === '/contact-sales' || cleanPath === '/contact') return '/contact-sales';
-  if (cleanPath === '/about' || cleanPath === '/about-us') return '/about';
-  if (cleanPath === '/pricing' || cleanPath === '/plans') return '/pricing';
+  const cleanPath = path.toLowerCase().split('#')[0].split('?')[0].replace(/\/$/, '') || '/';
+  if (cleanPath.startsWith('/product')) return '/products';
+  if (cleanPath.startsWith('/book-demo') || cleanPath.startsWith('/demo')) return '/book-demo';
+  if (cleanPath.startsWith('/contact')) return '/contact-sales';
+  if (cleanPath.startsWith('/about')) return '/about';
+  if (cleanPath.startsWith('/pricing') || cleanPath.startsWith('/plan')) return '/pricing';
+  if (cleanPath.startsWith('/career') || cleanPath.startsWith('/job')) return '/careers';
   return '/';
 };
 

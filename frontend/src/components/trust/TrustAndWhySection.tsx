@@ -33,11 +33,11 @@ export const TrustAndWhySection: React.FC = () => {
       <div className="max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
-          {/* Column 1: Why Choose DezoCRM */}
+          {/* Column 1: Why Choose Dezoryn Technologies */}
           <div className="lg:col-span-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 text-left shadow-xs flex flex-col justify-between">
             <div>
               <span className="text-xs font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400 font-['Plus_Jakarta_Sans']">
-                WHY CHOOSE DEZOCRM?
+                WHY CHOOSE DEZORYN TECHNOLOGIES?
               </span>
               <ul className="space-y-3.5 mt-6">
                 {whyPoints.map((point, idx) => (

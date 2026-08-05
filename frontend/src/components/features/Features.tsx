@@ -55,7 +55,7 @@ export const Features: React.FC = () => {
             Engineered for Modern Enterprise Growth
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300">
-            DezoCRM replaces fragmented legacy software with a unified, high-performance platform designed for scale.
+            Dezoryn Technologies replaces fragmented legacy software with a unified, high-performance platform designed for scale.
           </p>
         </div>
 

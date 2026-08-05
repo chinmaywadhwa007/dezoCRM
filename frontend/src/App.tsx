@@ -11,9 +11,9 @@ import {
   ContactSalesPage,
   AboutUsPage,
   PricingPage,
+  CareersPage,
   StatsBanner,
   AboutSection,
-  MarketplaceSection,
   MiddleGridSection,
   TrustAndWhySection,
   BottomFeatureStrip,
@@ -145,6 +145,19 @@ export const App: React.FC = () => {
             </motion.main>
           )}
 
+          {currentRoute === '/careers' && (
+            <motion.main
+              key="careers-page"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <CareersPage />
+            </motion.main>
+          )}
+
           {currentRoute === '/' && (
             <motion.main
               key="home-page"
@@ -164,13 +177,10 @@ export const App: React.FC = () => {
               {/* 4. About Section */}
               <AboutSection />
 
-              {/* 5. Marketplace Section */}
-              <MarketplaceSection />
-
-              {/* 6, 7, 8. Industries We Serve + Demo Center + Get Free Demo Form */}
+              {/* 5, 6, 7. Industries We Serve + Demo Center + Get Free Demo Form */}
               <MiddleGridSection />
 
-              {/* 9, 10, 11. Why Choose DezoCRM + Client Success Stories + Our Trusted Clients */}
+              {/* 9, 10, 11. Why Choose Dezoryn Technologies + Client Success Stories + Our Trusted Clients */}
               <TrustAndWhySection />
 
               {/* 12. Bottom Feature Strip */}
