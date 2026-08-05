@@ -114,7 +114,7 @@ export const PlatformPreview: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-6"
+              className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-6"
             >
               Everything You Need to Scale <br className="hidden sm:inline" />
               <span className="text-blue-600 dark:text-blue-500">Enterprise Revenue</span>
@@ -212,7 +212,7 @@ export const PlatformPreview: React.FC = () => {
               <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
               <div>
                 <span className="text-xs font-bold text-blue-200 uppercase tracking-widest">PROVEN IMPACT</span>
-                <div className="text-5xl sm:text-6xl font-black mt-4 mb-2 tracking-tight">
+                <div className="text-4xl sm:text-5xl font-black mt-4 mb-2 tracking-tight">
                   {activeData.metric}
                 </div>
                 <p className="text-sm font-medium text-blue-100">

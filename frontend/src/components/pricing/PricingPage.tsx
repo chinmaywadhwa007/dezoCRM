@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Check, 
@@ -9,9 +9,50 @@ import {
   GraduationCap,
   Hotel,
   Building,
-  ShoppingBag
+  ShoppingBag,
+  Star
 } from 'lucide-react';
 import { useNavigation } from '../../utils/NavigationContext';
+
+// ── CMS Dynamic Plan type ─────────────────────
+interface CmsPlan {
+  id: string;
+  name: string;
+  price: string;
+  description: string;
+  features: string[];
+  buttonText: string;
+  buttonUrl: string;
+  isHighlight: boolean;
+  ribbon: string | null;
+  colorTheme: string;
+  order: number;
+  isEnabled: boolean;
+}
+
+const COLOR_GRADIENT: Record<string, string> = {
+  blue: 'from-blue-600 to-cyan-500',
+  violet: 'from-violet-600 to-purple-500',
+  emerald: 'from-emerald-600 to-teal-500',
+  rose: 'from-rose-600 to-pink-500',
+  amber: 'from-amber-500 to-orange-500',
+  slate: 'from-slate-600 to-slate-700',
+  indigo: 'from-indigo-600 to-blue-600',
+  cyan: 'from-cyan-500 to-blue-500',
+};
+
+const COLOR_RING: Record<string, string> = {
+  blue: 'ring-blue-500', violet: 'ring-violet-500', emerald: 'ring-emerald-500',
+  rose: 'ring-rose-500', amber: 'ring-amber-500', slate: 'ring-slate-500',
+  indigo: 'ring-indigo-500', cyan: 'ring-cyan-500',
+};
+
+const COLOR_BADGE: Record<string, string> = {
+  blue: 'bg-blue-600', violet: 'bg-violet-600', emerald: 'bg-emerald-600',
+  rose: 'bg-rose-600', amber: 'bg-amber-500', slate: 'bg-slate-600',
+  indigo: 'bg-indigo-600', cyan: 'bg-cyan-500',
+};
+
 
 interface PricingTier {
   name: string;
@@ -332,8 +373,17 @@ export const PricingPage: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<string>('dezocrm');
   const [isAnnual, setIsAnnual] = useState<boolean>(true);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [cmsPlans, setCmsPlans] = useState<CmsPlan[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/v1/pricing?enabled=true')
+      .then(r => r.json())
+      .then(data => { if (data.success && data.data.length > 0) setCmsPlans(data.data); })
+      .catch(() => {});
+  }, []);
 
   const activeProduct = marketplacePricingData.find(p => p.id === selectedProduct) || marketplacePricingData[0];
+
 
   const faqs = [
     {
@@ -376,7 +426,7 @@ export const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4"
+            className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4"
           >
             Simple, Predictable Plans for <br />
             <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-violet-600 dark:from-blue-500 dark:via-cyan-400 dark:to-violet-400 bg-clip-text text-transparent">Every Enterprise Module</span>
@@ -420,6 +470,61 @@ export const PricingPage: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* ── CMS DYNAMIC PLANS ── */}
+        {cmsPlans.length > 0 && (
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/30 text-xs font-extrabold text-violet-600 dark:text-violet-400">
+                <Sparkles className="w-3.5 h-3.5" />Our Plans
+              </span>
+            </div>
+            <div className={`grid gap-6 ${cmsPlans.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto' : cmsPlans.length >= 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 max-w-sm mx-auto'}`}>
+              {cmsPlans.map((plan) => {
+                const grad = COLOR_GRADIENT[plan.colorTheme] || COLOR_GRADIENT.blue;
+                const ring = COLOR_RING[plan.colorTheme] || COLOR_RING.blue;
+                const badge = COLOR_BADGE[plan.colorTheme] || COLOR_BADGE.blue;
+                return (
+                  <motion.div key={plan.id}
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                    className={`relative flex flex-col rounded-3xl bg-white dark:bg-slate-900 border overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl ${plan.isHighlight ? `ring-2 ${ring} border-transparent shadow-xl` : 'border-slate-200 dark:border-slate-800'}`}>
+                    <div className={`h-1.5 w-full bg-gradient-to-r ${grad}`} />
+                    {plan.ribbon && (
+                      <div className={`absolute top-5 right-0 ${badge} text-white text-[10px] font-black px-3 py-1 rounded-l-lg shadow`}>
+                        {plan.ribbon}
+                      </div>
+                    )}
+                    <div className="p-7 flex flex-col gap-5 flex-1">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-black text-slate-900 dark:text-white">{plan.name}</h3>
+                          {plan.isHighlight && <Star className="w-4 h-4 text-amber-400 fill-amber-400" />}
+                        </div>
+                        <div className={`text-3xl font-black bg-gradient-to-r ${grad} bg-clip-text text-transparent`}>{plan.price}</div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{plan.description}</p>
+                      </div>
+                      <div className="space-y-2.5 flex-1">
+                        {plan.features.map((feat, i) => (
+                          <div key={i} className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+                            <div className={`w-4 h-4 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center shrink-0`}>
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            </div>
+                            {feat}
+                          </div>
+                        ))}
+                      </div>
+                      <button type="button"
+                        onClick={() => navigateTo(plan.buttonUrl as any)}
+                        className={`w-full py-3 rounded-2xl font-extrabold text-sm text-white bg-gradient-to-r ${grad} hover:opacity-90 transition flex items-center justify-center gap-2 shadow-md cursor-pointer`}>
+                        {plan.buttonText}<ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ── MARKETPLACE PRODUCT SELECTOR TABS ── */}
         <div className="flex items-center justify-center gap-2 sm:gap-4 mb-14 flex-wrap">

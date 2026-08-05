@@ -111,15 +111,8 @@ export const DezoAIWidget: React.FC = () => {
     bottom: 0
   };
 
-  const panelWidth = Math.min(360, windowSize.width - 32);
-  const panelHeight = Math.min(540, windowSize.height - 36);
 
-  const panelConstraints = {
-    left: -(windowSize.width - panelWidth - 36),
-    right: 0,
-    top: -(windowSize.height - panelHeight - 36),
-    bottom: 0
-  };
+
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -408,10 +401,8 @@ export const DezoAIWidget: React.FC = () => {
   if (!mounted) return null;
 
   return createPortal(
-    <div className="fixed bottom-6 right-6 z-[99999] font-['Plus_Jakarta_Sans',sans-serif] pointer-events-auto">
-      {/* ---------------------------------------------------- */}
-      {/* CLOSED STATE: FLOATING CIRCULAR ICON BUTTON           */}
-      {/* ---------------------------------------------------- */}
+    <>
+      {/* FLOATING BUTTON */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -425,7 +416,7 @@ export const DezoAIWidget: React.FC = () => {
             animate={{
               opacity: 1,
               scale: 1,
-              y: [0, -6, 2, -4, 0], // Gentle levitation float
+              y: [0, -6, 2, -4, 0],
               rotate: [0, 2, -2, 1, 0]
             }}
             exit={{ opacity: 0, scale: 0.7 }}
@@ -437,28 +428,29 @@ export const DezoAIWidget: React.FC = () => {
             }}
             onClick={() => setIsOpen(true)}
             onTap={() => setIsOpen(true)}
-            whileHover={{
-              scale: 1.12,
-              transition: { duration: 0.2 }
-            }}
+            whileHover={{ scale: 1.12, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.9 }}
-            aria-label="Open DezoAI Assistant (Drag anywhere)"
+            aria-label="Open DezoAI Assistant"
+            style={{
+              position: 'fixed',
+              bottom: '16px',
+              right: '16px',
+              zIndex: 99999,
+              pointerEvents: 'auto',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
             className={`group relative flex items-center justify-center w-[64px] h-[64px] rounded-full cursor-grab select-none p-[2px] bg-gradient-to-tr from-cyan-400 via-blue-600 to-purple-600 transition-all duration-300 ${
               isDark
                 ? 'shadow-[0_0_25px_rgba(6,182,212,0.45)] hover:shadow-[0_0_40px_rgba(6,182,212,0.7)]'
                 : 'shadow-[0_8px_25px_rgba(6,182,212,0.35)] hover:shadow-[0_12px_35px_rgba(6,182,212,0.55)]'
             }`}
           >
-            {/* Inner Glass Disc */}
             <div className={`w-full h-full rounded-full flex items-center justify-center transition-colors relative overflow-hidden backdrop-blur-xl ${
               isDark ? 'bg-slate-950/90 group-hover:bg-slate-900' : 'bg-white/95 group-hover:bg-cyan-50/90 shadow-inner'
             }`}>
-              {/* Radial Ambient Glow */}
               <div className={`absolute inset-0 bg-gradient-to-tr opacity-70 group-hover:opacity-100 transition-opacity ${
                 isDark ? 'from-cyan-500/25 via-blue-500/15 to-purple-500/25' : 'from-cyan-400/20 via-blue-400/10 to-purple-400/20'
               }`} />
-              
-              {/* Bot Icon */}
               <motion.div
                 animate={{ rotate: [0, 6, -6, 0], scale: [1, 1.08, 0.96, 1] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
@@ -468,61 +460,53 @@ export const DezoAIWidget: React.FC = () => {
                   isDark ? 'text-cyan-300 group-hover:text-white' : 'text-cyan-600 group-hover:text-cyan-700'
                 }`} />
               </motion.div>
-
-              {/* Pulse Ring */}
               <div className="absolute inset-0 rounded-full animate-pulse-glow bg-cyan-400/25 blur-md pointer-events-none" />
             </div>
-
-            {/* Top-Right Online Status Badge */}
             <span className="absolute -top-1 -right-1 flex h-4 w-4 z-20">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className={`relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 shadow-[0_0_10px_rgba(16,185,129,0.9)] ${
                 isDark ? 'border-slate-950' : 'border-white'
               }`} />
             </span>
-
-            {/* Hover Tooltip Badge (Appears to the left on hover) */}
             <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-x-2 group-hover:translate-x-0 whitespace-nowrap z-30">
               <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-lg border backdrop-blur-md flex items-center gap-1.5 ${
-                isDark
-                  ? 'bg-slate-900/90 border-cyan-500/30 text-white shadow-cyan-950/50'
-                  : 'bg-white/95 border-cyan-500/40 text-slate-900 shadow-slate-300/80'
+                isDark ? 'bg-slate-900/90 border-cyan-500/30 text-white' : 'bg-white/95 border-cyan-500/40 text-slate-900'
               }`}>
-                <Sparkles className="w-3 h-3 text-cyan-500" />
-                Ask DezoAI
+                <Sparkles className="w-3 h-3 text-cyan-500" />Ask DezoAI
               </div>
             </div>
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* ---------------------------------------------------- */}
-      {/* EXPANDED ASSISTANT PANEL (DARK & LIGHT THEME)        */}
-      {/* ---------------------------------------------------- */}
+      {/* EXPANDED PANEL */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             key="dezo-panel"
             role="dialog"
             aria-label="DezoAI Assistant"
-            drag
-            dragConstraints={panelConstraints}
-            dragElastic={0.05}
-            dragMomentum={false}
             initial={{ opacity: 0, scale: 0.9, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 15 }}
-            transition={{
-              type: 'spring',
-              stiffness: 350,
-              damping: 28
+            transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+            style={{
+              position: 'fixed',
+              bottom: '96px',
+              right: '16px',
+              width: 'min(360px, calc(100vw - 32px))',
+              height: `min(560px, calc(100vh - 112px))`,
+              zIndex: 99999,
+              pointerEvents: 'auto',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
             }}
-            className={`w-[calc(100vw-2rem)] sm:w-[350px] md:w-[360px] h-[540px] max-h-[85vh] rounded-[20px] backdrop-blur-2xl flex flex-col relative overflow-hidden select-none ${
+            className={`rounded-[20px] backdrop-blur-2xl flex flex-col overflow-hidden select-none ${
               isDark
                 ? 'bg-slate-950/90 border border-cyan-500/35 shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_40px_rgba(6,182,212,0.2)]'
                 : 'bg-white/95 border border-cyan-500/30 shadow-[0_15px_40px_rgba(0,0,0,0.12),0_0_30px_rgba(6,182,212,0.18)] text-slate-800'
             }`}
           >
+
             {/* Top Drag Grip Bar */}
             <div className={`w-full py-1 cursor-grab active:cursor-grabbing flex justify-center border-b ${
               isDark ? 'bg-slate-950/80 border-slate-900' : 'bg-slate-100/90 border-slate-200'
@@ -1122,8 +1106,9 @@ export const DezoAIWidget: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>,
+    </>,
     document.body
+
   );
 };
 

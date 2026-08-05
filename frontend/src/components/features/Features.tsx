@@ -51,7 +51,7 @@ export const Features: React.FC = () => {
           <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/80 px-3.5 py-1.5 rounded-full border border-blue-100 dark:border-blue-800/80">
             ENTERPRISE CAPABILITIES
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white mt-4 mb-5 tracking-tight font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white mt-4 mb-5 tracking-tight font-['Plus_Jakarta_Sans']">
             Engineered for Modern Enterprise Growth
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300">

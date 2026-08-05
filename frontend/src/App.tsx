@@ -19,13 +19,16 @@ import {
   BottomFeatureStrip,
   FinalCTABanner,
   Footer,
-  DezoAIWidget
+  DezoAIWidget,
+  AdminLogin,
+  AdminLayout
 } from './components';
 
 export const App: React.FC = () => {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(() => getRouteFromPath(window.location.pathname));
   const [activeSection, setActiveSection] = useState<string | undefined>(() => window.location.hash.replace('#', '') || undefined);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [adminUserRole, setAdminUserRole] = useState<string>('SUPER_ADMIN');
 
   // Listen to popstate (browser back/forward & pushState events)
   useEffect(() => {
@@ -65,8 +68,35 @@ export const App: React.FC = () => {
     exit: { opacity: 0, y: -16 }
   };
 
+  if (currentRoute === '/admin/login') {
+    return (
+      <NavigationContext.Provider value={{ currentRoute, activeSection, navigateTo }}>
+        <AdminLogin
+          onLoginSuccess={(role) => {
+            if (role) setAdminUserRole(role);
+            navigateTo('/admin/dashboard');
+          }}
+        />
+      </NavigationContext.Provider>
+    );
+  }
+
+  if (currentRoute === '/admin/dashboard') {
+    return (
+      <NavigationContext.Provider value={{ currentRoute, activeSection, navigateTo }}>
+        <AdminLayout
+          initialRole={adminUserRole}
+          onLogout={() => navigateTo('/admin/login')}
+        />
+      </NavigationContext.Provider>
+    );
+  }
+
   return (
     <NavigationContext.Provider value={{ currentRoute, activeSection, navigateTo }}>
+      {/* ── Global floating widget — outside ALL overflow/transform containers ── */}
+      <DezoAIWidget />
+
       <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-white text-slate-800'} relative selection:bg-cyan-500 selection:text-white font-['Plus_Jakarta_Sans',sans-serif] overflow-x-clip transition-colors duration-300`}>
 
         {/* Ambient background particles & lighting */}
@@ -194,9 +224,6 @@ export const App: React.FC = () => {
 
         {/* 14. Footer */}
         <Footer />
-
-        {/* 15. Floating DezoAI Help & Support Widget */}
-        <DezoAIWidget />
       </div>
     </NavigationContext.Provider>
   );

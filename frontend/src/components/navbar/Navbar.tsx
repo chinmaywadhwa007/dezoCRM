@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useNavigation, type AppRoute } from '../../utils/NavigationContext';
 
+interface NavItemData {
+  id: string;
+  label: string;
+  route: string;
+  order: number;
+  isVisible: boolean;
+  isHighlight: boolean;
+}
+
 interface NavbarProps {
   theme?: 'light' | 'dark';
   onToggleTheme?: () => void;
 }
+
+const STATIC_NAV: NavItemData[] = [
+  { id: '1', label: 'Home', route: '/', order: 0, isVisible: true, isHighlight: false },
+  { id: '2', label: 'Products', route: '/products', order: 1, isVisible: true, isHighlight: false },
+  { id: '3', label: 'Careers', route: '/careers', order: 2, isVisible: true, isHighlight: false },
+  { id: '4', label: 'Pricing', route: '/pricing', order: 3, isVisible: true, isHighlight: false },
+  { id: '5', label: 'About Us', route: '/about', order: 4, isVisible: true, isHighlight: false },
+  { id: '6', label: 'Contact Sales', route: '/contact-sales', order: 5, isVisible: true, isHighlight: false },
+];
 
 export const Navbar: React.FC<NavbarProps> = ({
   theme = 'light',
@@ -15,27 +33,35 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { currentRoute, activeSection, navigateTo } = useNavigation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState<NavItemData[]>(STATIC_NAV);
 
-  const navItems: { name: string; route: AppRoute; sectionId?: string }[] = [
-    { name: 'Home', route: '/' },
-    { name: 'Products', route: '/products' },
-    { name: 'Careers', route: '/careers' },
-    { name: 'Pricing', route: '/pricing' },
-    { name: 'About Us', route: '/about' },
-    { name: 'Contact Sales', route: '/contact-sales' },
-  ];
+  // Fetch navigation items from backend CMS API
+  useEffect(() => {
+    fetch('http://localhost:5000/api/v1/nav')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setNavItems(
+            data.data
+              .filter((item: NavItemData) => item.isVisible)
+              .sort((a: NavItemData, b: NavItemData) => a.order - b.order)
+          );
+        }
+      })
+      .catch(() => {
+        // Silently fallback to static nav
+      });
+  }, []);
 
-  const isNavItemActive = (item: { route: AppRoute; sectionId?: string }) => {
-    if (item.sectionId) {
-      return currentRoute === item.route && activeSection === item.sectionId;
-    }
-    return currentRoute === item.route && !activeSection;
+  const isNavItemActive = (item: NavItemData) => {
+    if (currentRoute === item.route && !activeSection) return true;
+    return false;
   };
 
-  const handleNavClick = (e: React.MouseEvent, route: AppRoute, sectionId?: string) => {
+  const handleNavClick = (e: React.MouseEvent, route: string) => {
     e.preventDefault();
     e.stopPropagation();
-    navigateTo(route, sectionId);
+    navigateTo(route as AppRoute);
     setMobileMenuOpen(false);
   };
 
@@ -49,9 +75,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-[1440px] mx-auto bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl backdrop-saturate-180 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-xl shadow-slate-900/5 dark:shadow-slate-950/60 px-6 lg:px-10 py-3 flex items-center justify-between pointer-events-auto transition-all duration-300 ring-1 ring-black/5 dark:ring-white/10">
 
         {/* Left Brand Logo */}
-        <button 
+        <button
           type="button"
-          onClick={() => navigateTo('/')} 
+          onClick={() => navigateTo('/')}
           className="flex items-center gap-3 group text-left cursor-pointer border-none bg-transparent"
         >
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white font-black text-xl shadow-md shadow-blue-600/25 group-hover:scale-105 transition-transform duration-300">
@@ -67,22 +93,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </button>
 
-        {/* Center Navigation Links */}
+        {/* Center Navigation Links — Dynamic from CMS */}
         <nav className="hidden lg:flex items-center gap-8 text-[15px]">
           {navItems.map((item) => {
             const isActive = isNavItemActive(item);
             return (
               <button
                 type="button"
-                key={item.name}
-                onClick={(e) => handleNavClick(e, item.route, item.sectionId)}
+                key={item.id}
+                onClick={(e) => handleNavClick(e, item.route)}
                 className={`transition-all duration-200 py-1 font-medium relative cursor-pointer border-none bg-transparent ${
-                  isActive
+                  item.isHighlight
+                    ? 'text-amber-500 dark:text-amber-400 font-black'
+                    : isActive
                     ? 'text-blue-600 dark:text-cyan-400 font-bold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-cyan-400'
                 }`}
               >
-                {item.name}
+                {item.label}
                 {isActive && (
                   <motion.span
                     layoutId="activeNavIndicator"
@@ -97,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right CTA Button & Theme Toggle (Desktop) */}
         <div className="hidden lg:flex items-center gap-4">
-          {/* Modern Interactive Theme Sliding Pill Switch */}
+          {/* Theme Sliding Pill Switch */}
           <button
             type="button"
             onClick={(e) => {
@@ -173,7 +201,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       </div>
 
-      {/* Mobile Dropdown with Framer Motion AnimatePresence */}
+      {/* Mobile Dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -186,15 +214,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             {navItems.map((item) => (
               <button
                 type="button"
-                key={item.name}
-                onClick={(e) => {
-                  handleNavClick(e, item.route, item.sectionId);
-                }}
+                key={item.id}
+                onClick={(e) => handleNavClick(e, item.route)}
                 className={`py-2 text-base font-medium transition-colors text-left border-none bg-transparent ${
-                  isNavItemActive(item) ? 'text-blue-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-blue-600'
+                  item.isHighlight
+                    ? 'text-amber-500 dark:text-amber-400 font-black'
+                    : isNavItemActive(item)
+                    ? 'text-blue-600 dark:text-cyan-400 font-bold'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-blue-600'
                 }`}
               >
-                {item.name}
+                {item.label}
               </button>
             ))}
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
@@ -216,7 +246,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </motion.header>
   );
 };
-
-
-
-

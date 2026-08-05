@@ -2,6 +2,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Global text scale-down ── */
+html {
+  font-size: 93%;
+}
+
+
 @layer utilities {
 
   .glass-card {

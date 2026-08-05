@@ -1,7 +1,18 @@
-export type AppRoute = '/' | '/products' | '/book-demo' | '/contact-sales' | '/about' | '/pricing' | '/careers';
+export type AppRoute =
+  | '/'
+  | '/products'
+  | '/book-demo'
+  | '/contact-sales'
+  | '/about'
+  | '/pricing'
+  | '/careers'
+  | '/admin/login'
+  | '/admin/dashboard';
 
 export const getRouteFromPath = (path: string): AppRoute => {
   const cleanPath = path.toLowerCase().split('#')[0].split('?')[0].replace(/\/$/, '') || '/';
+  if (cleanPath.startsWith('/admin/login')) return '/admin/login';
+  if (cleanPath.startsWith('/admin')) return '/admin/dashboard';
   if (cleanPath.startsWith('/product')) return '/products';
   if (cleanPath.startsWith('/book-demo') || cleanPath.startsWith('/demo')) return '/book-demo';
   if (cleanPath.startsWith('/contact')) return '/contact-sales';

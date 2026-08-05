@@ -15,4 +15,5 @@ export * from './pricing/PricingPage';
 export * from './footer';
 export * from './background';
 export * from './ai/DezoAIWidget';
-
+export * from './admin/AdminLogin';
+export * from './admin/AdminLayout';
