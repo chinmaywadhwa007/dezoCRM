@@ -13,8 +13,43 @@ import {
 } from 'lucide-react';
 import { useNavigation } from '../../utils/NavigationContext';
 
+const API_CONTACT = 'http://localhost:5000/api/v1/contact';
+
 export const ContactSalesPage: React.FC = () => {
   const { navigateTo } = useNavigation();
+
+  const [contactData, setContactData] = useState({
+    phone: '+91 77778 04850',
+    email: 'support@dezoryn.com',
+    address: 'Indore, Madhya Pradesh, India',
+    googleMap: 'https://maps.google.com/?q=Indore,Madhya+Pradesh,India',
+    whatsApp: '+917777804850',
+    businessHours: 'Mon - Fri: 9:00 AM - 6:00 PM IST',
+  });
+
+  React.useEffect(() => {
+    const fetchContact = async () => {
+      try {
+        const res = await fetch(API_CONTACT);
+        const data = await res.json();
+        if (data.success && data.data) {
+          setContactData({
+            phone: data.data.phone || '+91 77778 04850',
+            email: data.data.email || 'support@dezoryn.com',
+            address: data.data.address || 'Indore, Madhya Pradesh, India',
+            googleMap: data.data.googleMap || '',
+            whatsApp: data.data.whatsApp || '+917777804850',
+            businessHours: data.data.businessHours || 'Mon - Fri: 9:00 AM - 6:00 PM IST',
+          });
+        }
+      } catch {
+        // use default
+      }
+    };
+    fetchContact();
+    window.addEventListener('focus', fetchContact);
+    return () => window.removeEventListener('focus', fetchContact);
+  }, []);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -23,7 +58,7 @@ export const ContactSalesPage: React.FC = () => {
     phone: '',
     industry: 'Software / Technology',
     employees: '100-500 Employees',
-    budget: '$25k - $50k / year',
+    budget: '₹20L - ₹40L / year',
     productInterest: 'Dezoryn Technologies Enterprise Platform',
     requirements: ''
   });
@@ -37,12 +72,20 @@ export const ContactSalesPage: React.FC = () => {
 
   const officeLocations = [
     {
+      city: 'Indore (Global HQ)',
+      country: 'India',
+      address: contactData.address,
+      phone: contactData.phone,
+      hours: contactData.businessHours,
+      isHQ: true
+    },
+    {
       city: 'San Francisco',
       country: 'United States',
       address: '500 Howard Street, Suite 400, CA 94105',
       phone: '+1 (415) 890-2100',
       hours: '8:00 AM - 6:00 PM PST',
-      isHQ: true
+      isHQ: false
     },
     {
       city: 'London',
@@ -59,16 +102,9 @@ export const ContactSalesPage: React.FC = () => {
       phone: '+65 6789 0123',
       hours: '9:00 AM - 6:00 PM SGT',
       isHQ: false
-    },
-    {
-      city: 'Mumbai',
-      country: 'India',
-      address: 'BKC Center, Bandra East, Maharashtra 400051',
-      phone: '+91 22 4567 8900',
-      hours: '9:30 AM - 6:30 PM IST',
-      isHQ: false
     }
   ];
+
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-12 lg:py-20 font-['Plus_Jakarta_Sans',sans-serif] relative overflow-hidden transition-colors duration-300">
@@ -87,7 +123,7 @@ export const ContactSalesPage: React.FC = () => {
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-400/30 text-xs font-extrabold text-cyan-600 dark:text-cyan-400 mb-4"
           >
             <Headphones className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-            <span>ENTERPRISE SALES & GLOBAL ADVISORY</span>
+            <span>ENTERPRISE & GLOBAL ADVISORY</span>
           </motion.div>
 
           <motion.h1
@@ -96,7 +132,7 @@ export const ContactSalesPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4"
           >
-            Talk with Our <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-violet-600 dark:from-cyan-400 dark:via-blue-500 dark:to-violet-400 bg-clip-text text-transparent">Enterprise Sales Team</span>
+            Talk with Our <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-violet-600 dark:from-cyan-400 dark:via-blue-500 dark:to-violet-400 bg-clip-text text-transparent">Enterprise Team</span>
           </motion.h1>
 
           <motion.p
@@ -266,10 +302,10 @@ export const ContactSalesPage: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                     className="w-full px-3 py-3 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 focus:border-blue-600 dark:focus:border-cyan-400 focus:outline-none"
                   >
-                    <option>$10k - $25k / year</option>
-                    <option>$25k - $50k / year</option>
-                    <option>$50k - $150k / year</option>
-                    <option>$150k+ Custom Enterprise</option>
+                    <option>₹8L - ₹20L / year</option>
+                    <option>₹20L - ₹40L / year</option>
+                    <option>₹40L - ₹1.2Cr / year</option>
+                    <option>₹1.2Cr+ Custom Enterprise</option>
                   </select>
                 </div>
               </div>

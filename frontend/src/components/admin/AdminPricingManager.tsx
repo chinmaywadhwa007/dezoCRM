@@ -358,7 +358,7 @@ export const AdminPricingManager: React.FC = () => {
                   <div className="space-y-1.5">
                     <label className="text-xs font-extrabold text-slate-600 dark:text-slate-400">Price *</label>
                     <input type="text" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-                      placeholder="e.g. $79/mo or Custom"
+                      placeholder="e.g. ₹5,999/mo or Custom"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500/40 outline-none" />
                   </div>
                 </div>

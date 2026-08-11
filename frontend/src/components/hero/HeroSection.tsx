@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback, Suspense } from "react";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { HeroContent } from "./HeroContent";
 import { HeroEarth3D } from "./HeroEarth3D";
 
@@ -12,8 +12,15 @@ const PCBFallback: React.FC = () => (
   </div>
 );
 
-export const HeroSection: React.FC = () => {
+export const HeroSection: React.FC = React.memo(() => {
   const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { amount: 0.05 });
+  const isInViewRef = useRef(isInView);
+
+  useEffect(() => {
+    isInViewRef.current = isInView;
+  }, [isInView]);
+
   const spotlightRef = useRef<HTMLDivElement>(null);
   const ambientLayerRef = useRef<HTMLDivElement>(null);
   const leftColumnRef = useRef<HTMLDivElement>(null);
@@ -25,7 +32,7 @@ export const HeroSection: React.FC = () => {
   const currentScroll = useRef(0);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || !isInViewRef.current) return;
     const rect = sectionRef.current.getBoundingClientRect();
     targetSpotlight.current = {
       x: ((e.clientX - rect.left) / rect.width) * 100,
@@ -44,6 +51,12 @@ export const HeroSection: React.FC = () => {
       start + (end - start) * amount;
 
     const updateMotion = () => {
+      // Immediately yield CPU when section is off-screen or tab is hidden
+      if (!isInViewRef.current || document.hidden) {
+        frameId = window.requestAnimationFrame(updateMotion);
+        return;
+      }
+
       currentSpotlight.current.x = lerp(
         currentSpotlight.current.x,
         targetSpotlight.current.x,
@@ -80,6 +93,7 @@ export const HeroSection: React.FC = () => {
     };
 
     const handleScroll = () => {
+      if (!isInViewRef.current) return;
       const scrollY = window.scrollY;
       targetScroll.current = Math.min(scrollY / 500, 1);
     };
@@ -151,15 +165,14 @@ export const HeroSection: React.FC = () => {
             }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ scale: 0.98 }}
+              animate={{ scale: 1 }}
               transition={{
-                duration: 0.8,
-                delay: 0.2,
+                duration: 0.4,
                 ease: [0.16, 1, 0.3, 1],
               }}
               whileHover={{ scale: 1.005 }}
-              className="relative w-full rounded-[24px] bg-slate-900/90 dark:bg-[#030712] border border-blue-200/80 dark:border-blue-950/80 shadow-xl shadow-blue-900/10 dark:shadow-cyan-950/40 overflow-hidden backdrop-blur-md transition-all duration-500 p-0"
+              className="relative w-full rounded-[24px] bg-slate-900/90 dark:bg-[#030712] border border-blue-200/80 dark:border-blue-950/80 shadow-xl shadow-blue-900/10 dark:shadow-cyan-950/40 overflow-hidden backdrop-blur-md transition-all duration-500 p-0 transform-gpu"
               style={{ willChange: "transform" }}
             >
               {/* Soft radial backdrop glow */}
@@ -177,4 +190,4 @@ export const HeroSection: React.FC = () => {
       </div>
     </section>
   );
-};
+});

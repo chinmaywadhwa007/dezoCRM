@@ -3,6 +3,16 @@ export * from './hero';
 export * from './stats';
 export * from './about';
 export * from './marketplace/MarketplaceSection';
+export * from './marketplace/MarketplacePage';
+export * from './marketplace/MarketplaceHero';
+export * from './marketplace/MarketplaceCategoryNav';
+export * from './marketplace/MarketplaceFilterSidebar';
+export * from './marketplace/MarketplaceProductCard';
+export * from './marketplace/MarketplaceProductGrid';
+export * from './marketplace/ProductDetailPage';
+export * from './marketplace/ProductCompareModal';
+export * from './marketplace/MarketplaceCompareBar';
+export * from './marketplace/MarketplaceCTASection';
 export * from './careers/CareersSection';
 export * from './middle/MiddleGridSection';
 export * from './trust/TrustAndWhySection';
@@ -17,3 +27,11 @@ export * from './background';
 export * from './ai/DezoAIWidget';
 export * from './admin/AdminLogin';
 export * from './admin/AdminLayout';
+export * from './admin/AdminFAQManager';
+export * from './admin/AdminJobManager';
+export * from './admin/AdminAboutCMS';
+export * from './admin/AdminMarketplaceManager';
+export * from './admin/AdminMarketplaceAnalytics';
+export * from './faq/FAQSection';
+
+

@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquareQuote, Plus, Trash2, Edit3, Eye, EyeOff,
   Save, X, RefreshCw, CheckCircle2, Star, Upload,
-  User, Building2, Briefcase, GripVertical
+  User, Building2, Briefcase, GripVertical, Sparkles
 } from 'lucide-react';
+import { openAdminAIAssistant } from './AdminLayout';
 
 const API = 'http://localhost:5000/api/v1/testimonials';
 const UPLOADS_BASE = 'http://localhost:5000';
@@ -193,6 +194,33 @@ export const AdminTestimonialManager: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() =>
+              openAdminAIAssistant({
+                type: 'testimonial',
+                onInsert: (_fieldType, value) => {
+                  if (typeof value === 'object') {
+                    setForm({
+                      name: value.name || '',
+                      company: value.company || '',
+                      designation: value.designation || '',
+                      review: value.review || '',
+                      rating: value.rating || 5,
+                      photo: null,
+                      order: items.length,
+                      isEnabled: true,
+                    });
+                    setModal({ mode: 'create' });
+                  }
+                },
+              })
+            }
+            className="px-4 py-2.5 rounded-xl bg-cyan-400/20 hover:bg-cyan-400/30 border border-cyan-300/40 text-cyan-200 font-extrabold text-xs transition flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
+            Generate Review with AI
+          </button>
           <span className="px-3 py-1.5 rounded-xl bg-white/10 text-white text-xs font-extrabold border border-white/10">
             {items.filter(i => i.isEnabled).length} active / {items.length} total
           </span>

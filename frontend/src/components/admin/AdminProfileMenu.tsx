@@ -22,9 +22,9 @@ interface AdminProfileMenuProps {
 
 export const AdminProfileMenu: React.FC<AdminProfileMenuProps> = ({
   user = {
-    name: 'Super Admin',
-    email: 'superadmin@dezoryn.com',
-    role: 'SUPER_ADMIN',
+    name: 'System Admin',
+    email: 'admin@dezoryn.com',
+    role: 'ADMIN',
   },
   onLogout,
 }) => {

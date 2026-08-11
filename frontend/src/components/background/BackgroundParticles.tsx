@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export const BackgroundParticles: React.FC = () => {
+export const BackgroundParticles: React.FC = React.memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,21 +20,26 @@ export const BackgroundParticles: React.FC = () => {
       height = canvas.height = window.innerHeight;
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
-    // Particle Array
-    const particleCount = 45;
+    // Optimized Particle Array (22 lightweight items)
+    const particleCount = 22;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 2 + 0.8,
-      alpha: Math.random() * 0.4 + 0.1,
-      speedX: (Math.random() - 0.5) * 0.3,
-      speedY: (Math.random() - 0.5) * 0.3,
-      pulseSpeed: Math.random() * 0.02 + 0.005
+      radius: Math.random() * 1.8 + 0.6,
+      alpha: Math.random() * 0.35 + 0.1,
+      speedX: (Math.random() - 0.5) * 0.25,
+      speedY: (Math.random() - 0.5) * 0.25,
+      pulseSpeed: Math.random() * 0.015 + 0.004
     }));
 
     const render = () => {
+      if (document.hidden) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
       particles.forEach((p) => {
@@ -48,9 +53,9 @@ export const BackgroundParticles: React.FC = () => {
         if (p.y > height) p.y = 0;
 
         // Pulse alpha
-        p.alpha += Math.sin(Date.now() * p.pulseSpeed) * 0.003;
+        p.alpha += Math.sin(Date.now() * p.pulseSpeed) * 0.002;
 
-        ctx.fillStyle = `rgba(37, 99, 235, ${Math.max(0.05, Math.min(0.5, p.alpha))})`;
+        ctx.fillStyle = `rgba(37, 99, 235, ${Math.max(0.05, Math.min(0.4, p.alpha))})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
@@ -59,23 +64,26 @@ export const BackgroundParticles: React.FC = () => {
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    let startTimer = setTimeout(() => {
+      render();
+    }, 150);
 
     return () => {
+      clearTimeout(startTimer);
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden transform-gpu">
       {/* Soft Radial Blue Gradient Background */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-tr from-blue-100/40 via-sky-50/60 to-transparent dark:from-blue-950/30 dark:via-slate-950/50 dark:to-transparent rounded-full blur-[140px] opacity-70 transition-colors duration-300" />
-      <div className="absolute top-10 right-10 w-[500px] h-[500px] bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-blue-100/30 via-sky-50/40 to-transparent dark:from-blue-950/25 dark:via-slate-950/40 dark:to-transparent rounded-full blur-3xl opacity-60 transition-colors duration-300" />
+      <div className="absolute top-10 right-10 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-2xl pointer-events-none" />
       
       {/* Tiny Ambient Floating Particles Canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-60" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-50" />
     </div>
   );
-};
+});
 

@@ -5,8 +5,9 @@ import {
   Save, X, RefreshCw, CheckCircle2, Star,
   LayoutGrid, List, Search, ChevronDown,
   Zap, Bot, TrendingUp, ShieldCheck, Globe, Layers,
-  BarChart3, Lock, Database, Cpu, Wifi, Cloud
+  BarChart3, Lock, Database, Cpu, Wifi, Cloud, Sparkles
 } from 'lucide-react';
+import { openAdminAIAssistant } from './AdminLayout';
 
 const API = 'http://localhost:5000/api/v1/products';
 
@@ -208,6 +209,29 @@ export const AdminProductManager: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() =>
+              openAdminAIAssistant({
+                type: 'product',
+                onInsert: (_fieldType, value) => {
+                  if (typeof value === 'object') {
+                    setForm((prev) => ({
+                      ...prev,
+                      title: value.title || prev.title,
+                      subtitle: value.subtitle || prev.subtitle,
+                      description: value.description || prev.description,
+                      features: Array.isArray(value.features) ? value.features : prev.features,
+                    }));
+                  }
+                },
+              })
+            }
+            className="px-4 py-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/30 text-cyan-300 font-extrabold text-xs transition flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
+            AI Generator
+          </button>
           <span className="px-3 py-1.5 rounded-xl bg-white/10 text-white text-xs font-extrabold border border-white/10">
             {products.filter(p => p.isEnabled).length} active / {products.length} total
           </span>

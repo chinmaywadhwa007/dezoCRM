@@ -3,6 +3,7 @@ import { Menu, X, ArrowRight, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useNavigation, type AppRoute } from '../../utils/NavigationContext';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 interface NavItemData {
   id: string;
@@ -20,18 +21,19 @@ interface NavbarProps {
 
 const STATIC_NAV: NavItemData[] = [
   { id: '1', label: 'Home', route: '/', order: 0, isVisible: true, isHighlight: false },
-  { id: '2', label: 'Products', route: '/products', order: 1, isVisible: true, isHighlight: false },
+  { id: '2', label: 'Marketplace', route: '/marketplace', order: 1, isVisible: true, isHighlight: false },
   { id: '3', label: 'Careers', route: '/careers', order: 2, isVisible: true, isHighlight: false },
   { id: '4', label: 'Pricing', route: '/pricing', order: 3, isVisible: true, isHighlight: false },
   { id: '5', label: 'About Us', route: '/about', order: 4, isVisible: true, isHighlight: false },
-  { id: '6', label: 'Contact Sales', route: '/contact-sales', order: 5, isVisible: true, isHighlight: false },
+  { id: '6', label: 'Contact', route: '/contact-sales', order: 5, isVisible: true, isHighlight: false },
 ];
 
-export const Navbar: React.FC<NavbarProps> = ({
+export const Navbar: React.FC<NavbarProps> = React.memo(({
   theme = 'light',
   onToggleTheme
 }) => {
   const { currentRoute, activeSection, navigateTo } = useNavigation();
+  const { settings: siteSettings } = useSiteSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItemData[]>(STATIC_NAV);
 
@@ -41,28 +43,58 @@ export const Navbar: React.FC<NavbarProps> = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const normalized = data.data.map((item: NavItemData) => {
+            let updated = { ...item };
+            if (updated.route === '/products' || updated.label === 'Products') {
+              updated = { ...updated, label: 'Marketplace', route: '/marketplace' };
+            }
+            if (updated.route === '/contact-sales' || updated.label === 'Contact Sales' || updated.label === 'Contact Sales Team') {
+              updated = { ...updated, label: 'Contact', route: '/contact-sales' };
+            }
+            return updated;
+          });
           setNavItems(
-            data.data
+            normalized
               .filter((item: NavItemData) => item.isVisible)
               .sort((a: NavItemData, b: NavItemData) => a.order - b.order)
           );
         }
       })
       .catch(() => {
-        // Silently fallback to static nav
+        // fallback to static nav
       });
   }, []);
 
-  const isNavItemActive = (item: NavItemData) => {
-    if (currentRoute === item.route && !activeSection) return true;
-    return false;
+  const isNavItemActive = (item: NavItemData): boolean => {
+    if (item.route === '/') return currentRoute === '/' && !activeSection;
+    if (item.route === '/marketplace' || item.route === '/products') return currentRoute === '/marketplace' || currentRoute === '/products';
+    if (item.route === '/careers') return currentRoute === '/careers';
+    if (item.route === '/pricing') return currentRoute === '/pricing';
+    if (item.route === '/about') return currentRoute === '/about';
+    if (item.route === '/contact-sales') return currentRoute === '/contact-sales';
+    if (item.route.startsWith('#')) return activeSection === item.route.replace('#', '');
+    return currentRoute === item.route;
   };
 
   const handleNavClick = (e: React.MouseEvent, route: string) => {
     e.preventDefault();
-    e.stopPropagation();
-    navigateTo(route as AppRoute);
     setMobileMenuOpen(false);
+
+    if (route.startsWith('#')) {
+      const elementId = route.replace('#', '');
+      if (currentRoute !== '/') {
+        navigateTo('/', elementId);
+      } else {
+        const el = document.getElementById(elementId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+          window.location.hash = elementId;
+        }
+      }
+      return;
+    }
+
+    navigateTo(route as AppRoute);
   };
 
   return (
@@ -70,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="sticky top-0 z-50 py-2.5 px-4 sm:px-6 lg:px-8 pointer-events-none"
+      className="fixed top-0 inset-x-0 z-[100] py-2.5 px-4 sm:px-6 lg:px-8 pointer-events-none"
     >
       <div className="max-w-[1440px] mx-auto bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl backdrop-saturate-180 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-xl shadow-slate-900/5 dark:shadow-slate-950/60 px-6 lg:px-10 py-3 flex items-center justify-between pointer-events-auto transition-all duration-300 ring-1 ring-black/5 dark:ring-white/10">
 
@@ -80,12 +112,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => navigateTo('/')}
           className="flex items-center gap-3 group text-left cursor-pointer border-none bg-transparent"
         >
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white font-black text-xl shadow-md shadow-blue-600/25 group-hover:scale-105 transition-transform duration-300">
-            D
-          </div>
+          {siteSettings.logoUrl ? (
+            <img src={siteSettings.logoUrl} alt={siteSettings.websiteName} className="h-10 w-auto object-contain rounded-xl" />
+          ) : (
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white font-black text-xl shadow-md shadow-blue-600/25 group-hover:scale-105 transition-transform duration-300">
+              {(siteSettings.websiteName || 'D')[0]}
+            </div>
+          )}
           <div className="flex flex-col text-left">
             <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">
-              Dezoryn <span className="text-blue-600">Technologies</span>
+              {siteSettings.websiteName || 'Dezoryn Technologies'}
             </span>
             <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 tracking-wider mt-1 uppercase">
               Predictive Sales Platform
@@ -245,4 +281,4 @@ export const Navbar: React.FC<NavbarProps> = ({
       </AnimatePresence>
     </motion.header>
   );
-};
+});

@@ -26,6 +26,7 @@ import {
   Moon
 } from 'lucide-react';
 import { useNavigation } from '../../utils/NavigationContext';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
 
 export interface ChatMessage {
   id: string;
@@ -42,15 +43,75 @@ export const openDezoAI = (query?: string) => {
   }
 };
 
-export const DezoAIWidget: React.FC = () => {
+export const DezoAIWidget: React.FC = React.memo(() => {
   const { navigateTo } = useNavigation();
+  const { settings: siteSettings } = useSiteSettings();
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [fabMenuOpen, setFabMenuOpen] = useState(false);
+  const fabMenuRef = React.useRef<HTMLDivElement>(null);
+  const fabLeaveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleFabWrapperEnter = () => {
+    if (fabLeaveTimer.current) clearTimeout(fabLeaveTimer.current);
+    setFabMenuOpen(true);
+  };
+  const handleFabWrapperLeave = () => {
+    fabLeaveTimer.current = setTimeout(() => setFabMenuOpen(false), 350);
+  };
+
+  // Also close menu when clicking outside
+  useEffect(() => {
+    if (!fabMenuOpen) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (fabMenuRef.current && !fabMenuRef.current.contains(e.target as Node)) {
+        setFabMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [fabMenuOpen]);
+
   const [activeTab, setActiveTab] = useState<'home' | 'chat' | 'ticket' | 'faq'>('home');
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [widgetTheme, setWidgetTheme] = useState<'dark' | 'light'>('dark');
+
+  const [botName, setBotName] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('dezo-ai-chatbot-name') || 'DezoAI';
+    }
+    return 'DezoAI';
+  });
+
+  useEffect(() => {
+    const fetchSettings = () => {
+      fetch('http://localhost:5000/api/v1/ai/settings')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.data?.chatbotName) {
+            setBotName(data.data.chatbotName);
+          }
+        })
+        .catch(() => {
+          const local = localStorage.getItem('dezo-ai-chatbot-name');
+          if (local) setBotName(local);
+        });
+    };
+
+    fetchSettings();
+
+    const handleUpdate = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      if (detail?.chatbotName) {
+        setBotName(detail.chatbotName);
+      }
+    };
+
+    window.addEventListener('dezo-ai-settings-updated', handleUpdate);
+    return () => window.removeEventListener('dezo-ai-settings-updated', handleUpdate);
+  }, []);
 
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 1200,
@@ -131,8 +192,8 @@ export const DezoAIWidget: React.FC = () => {
   // Initial typing welcome lines
   const welcomeLines = [
     "Hello 👋",
-    "Welcome to Dezoryn Technologies.",
-    "I'm DezoAI.",
+    `Welcome to ${siteSettings.websiteName || 'Dezoryn Technologies'}.`,
+    `I'm ${botName}.`,
     "How can I help you today?"
   ];
   const [visibleWelcomeLines, setVisibleWelcomeLines] = useState<number>(0);
@@ -147,19 +208,31 @@ export const DezoAIWidget: React.FC = () => {
   }, [isOpen, visibleWelcomeLines]);
 
   // Initial Chat Messages
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome-1',
       sender: 'bot',
-      text: "Welcome to Dezoryn Technologies! I'm DezoAI, your enterprise assistant. I can answer questions about platform features, ERP modules, pricing, or help you schedule a demo.",
+      text: `Welcome to ${siteSettings.websiteName || 'Dezoryn Technologies'}! I'm ${botName}, your assistant. How can I help you today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       quickReplies: [
         { label: "Book a Demo", action: () => navigateTo('/book-demo') },
         { label: "View Pricing", action: () => navigateTo('/pricing') },
-        { label: "Contact Sales", action: () => navigateTo('/contact-sales') }
+        { label: "Contact Us", action: () => navigateTo('/contact-sales') }
       ]
     }
   ]);
+
+  useEffect(() => {
+    setMessages(prev => {
+      if (prev.length === 1 && prev[0].id === 'welcome-1') {
+        return [{
+          ...prev[0],
+          text: `Welcome to ${siteSettings.websiteName || 'Dezoryn Technologies'}! I'm ${botName}, your assistant. How can I help you today?`,
+        }];
+      }
+      return prev;
+    });
+  }, [botName, siteSettings.websiteName]);
 
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -243,7 +316,7 @@ export const DezoAIWidget: React.FC = () => {
     },
     {
       id: 'contact-sales',
-      title: 'Contact Sales',
+      title: 'Contact Us',
       desc: 'Speak directly with our enterprise team',
       icon: PhoneCall,
       color: isDark ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/30' : 'text-emerald-600 bg-emerald-50 border-emerald-200',
@@ -293,7 +366,7 @@ export const DezoAIWidget: React.FC = () => {
     
     if (q.includes('cost') || q.includes('price') || q.includes('pricing') || q.includes('plan')) {
       return {
-        text: "Dezoryn Technologies offers scalable plans tailored to growing teams and enterprises:\n\n• **Starter**: $29/user/mo (Essential CRM & Lead Tracking)\n• **Professional**: $79/user/mo (Advanced AI Pipeline & Automations)\n• **Enterprise**: Custom volume pricing with dedicated SLA, custom ERP integrations & 24/7 manager.",
+        text: "Dezoryn Technologies offers scalable plans tailored to growing teams and enterprises:\n\n• **Starter**: ₹2,499/user/mo (Essential CRM & Lead Tracking)\n• **Professional**: ₹5,999/user/mo (Advanced AI Pipeline & Automations)\n• **Enterprise**: Custom volume pricing with dedicated SLA, custom ERP integrations & 24/7 manager.",
         cta: { label: "Explore Detailed Pricing", route: "/pricing" }
       };
     }
@@ -328,7 +401,7 @@ export const DezoAIWidget: React.FC = () => {
 
     if (q.includes('job') || q.includes('career') || q.includes('hiring') || q.includes('opening') || q.includes('position') || q.includes('work')) {
       return {
-        text: "Dezoryn Technologies is hiring! We currently have open positions across Engineering & AI, Product & Design, Sales, and Customer Success:\n\n• **Senior Full-Stack AI Engineer** ($130k - $170k)\n• **Lead Product Designer** ($115k - $150k)\n• **Enterprise Sales Account Executive** ($120k - $160k)\n• **AI Research Scientist** ($150k - $200k)",
+        text: "Dezoryn Technologies is hiring! We currently have open positions across Engineering & AI, Product & Design, Sales, and Customer Success:\n\n• **Senior Full-Stack AI Engineer** (₹13,00,000 - ₹17,00,000)\n• **Lead Product Designer** (₹11,50,000 - ₹15,00,000)\n• **Enterprise Sales Account Executive** (₹12,00,000 - ₹16,00,000)\n• **AI Research Scientist** (₹15,00,000 - ₹20,00,000)",
         cta: { label: "View All Job Openings", route: "/careers" }
       };
     }
@@ -413,68 +486,155 @@ export const DezoAIWidget: React.FC = () => {
             dragMomentum={true}
             whileDrag={{ scale: 1.1, cursor: 'grabbing' }}
             initial={{ opacity: 0, scale: 0.7, y: 15 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: [0, -6, 2, -4, 0],
-              rotate: [0, 2, -2, 1, 0]
-            }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.7 }}
-            transition={{
-              y: { duration: 3.0, repeat: Infinity, ease: 'easeInOut' },
-              rotate: { duration: 2.8, repeat: Infinity, ease: 'easeInOut' },
-              opacity: { duration: 0.25 },
-              scale: { duration: 0.25 }
-            }}
-            onClick={() => setIsOpen(true)}
-            onTap={() => setIsOpen(true)}
-            whileHover={{ scale: 1.12, transition: { duration: 0.2 } }}
-            whileTap={{ scale: 0.9 }}
-            aria-label="Open DezoAI Assistant"
+            transition={{ opacity: { duration: 0.25 }, scale: { duration: 0.25 } }}
+            aria-label="Toggle DezoAI Quick Menu"
             style={{
               position: 'fixed',
-              bottom: '16px',
-              right: '16px',
+              bottom: '20px',
+              right: '20px',
               zIndex: 99999,
               pointerEvents: 'auto',
               fontFamily: "'Plus Jakarta Sans', sans-serif",
             }}
-            className={`group relative flex items-center justify-center w-[64px] h-[64px] rounded-full cursor-grab select-none p-[2px] bg-gradient-to-tr from-cyan-400 via-blue-600 to-purple-600 transition-all duration-300 ${
-              isDark
-                ? 'shadow-[0_0_25px_rgba(6,182,212,0.45)] hover:shadow-[0_0_40px_rgba(6,182,212,0.7)]'
-                : 'shadow-[0_8px_25px_rgba(6,182,212,0.35)] hover:shadow-[0_12px_35px_rgba(6,182,212,0.55)]'
-            }`}
+            className="relative select-none"
           >
-            <div className={`w-full h-full rounded-full flex items-center justify-center transition-colors relative overflow-hidden backdrop-blur-xl ${
-              isDark ? 'bg-slate-950/90 group-hover:bg-slate-900' : 'bg-white/95 group-hover:bg-cyan-50/90 shadow-inner'
-            }`}>
-              <div className={`absolute inset-0 bg-gradient-to-tr opacity-70 group-hover:opacity-100 transition-opacity ${
-                isDark ? 'from-cyan-500/25 via-blue-500/15 to-purple-500/25' : 'from-cyan-400/20 via-blue-400/10 to-purple-400/20'
-              }`} />
-              <motion.div
-                animate={{ rotate: [0, 6, -6, 0], scale: [1, 1.08, 0.96, 1] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative z-10"
-              >
-                <Bot className={`w-8 h-8 transition-colors duration-200 ${
-                  isDark ? 'text-cyan-300 group-hover:text-white' : 'text-cyan-600 group-hover:text-cyan-700'
-                }`} />
-              </motion.div>
-              <div className="absolute inset-0 rounded-full animate-pulse-glow bg-cyan-400/25 blur-md pointer-events-none" />
-            </div>
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 z-20">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className={`relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 shadow-[0_0_10px_rgba(16,185,129,0.9)] ${
-                isDark ? 'border-slate-950' : 'border-white'
-              }`} />
-            </span>
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-x-2 group-hover:translate-x-0 whitespace-nowrap z-30">
-              <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold shadow-lg border backdrop-blur-md flex items-center gap-1.5 ${
-                isDark ? 'bg-slate-900/90 border-cyan-500/30 text-white' : 'bg-white/95 border-cyan-500/40 text-slate-900'
+            {/* Wrapper div — hover OR click opens menu, leave closes after 350ms */}
+            <div
+              ref={fabMenuRef}
+              className="relative"
+              onMouseEnter={handleFabWrapperEnter}
+              onMouseLeave={handleFabWrapperLeave}
+            >
+
+            {/* ── Click-to-open quick-action panel ── */}
+            <div
+              className={`absolute bottom-[80px] right-0 w-56 transition-all duration-300 ease-out origin-bottom-right ${
+                fabMenuOpen
+                  ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                  : 'opacity-0 translate-y-3 scale-95 pointer-events-none'
+              }`}
+            >
+              <div className={`rounded-2xl border shadow-2xl overflow-hidden backdrop-blur-2xl ${
+                isDark
+                  ? 'bg-slate-900/95 border-cyan-500/25 shadow-cyan-500/10'
+                  : 'bg-white/98 border-slate-200/80 shadow-slate-300/40'
               }`}>
-                <Sparkles className="w-3 h-3 text-cyan-500" />Ask DezoAI
+                {/* Header */}
+                <div className={`px-4 py-3 border-b flex items-center gap-2.5 ${
+                  isDark ? 'border-slate-800/80 bg-slate-950/60' : 'border-slate-100 bg-slate-50/80'
+                }`}>
+                  <div className="flex items-center gap-1.5">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 1.2, repeat: Infinity }}
+                      className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"
+                    />
+                    <span className={`text-[11px] font-black uppercase tracking-widest ${
+                      isDark ? 'text-slate-400' : 'text-slate-500'
+                    }`}>DezoAI</span>
+                  </div>
+                  <div className="ml-auto flex items-center gap-1">
+                    {/* Typing dots */}
+                    {[0, 0.18, 0.36].map((delay, i) => (
+                      <motion.div
+                        key={i}
+                        animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+                        transition={{ duration: 0.9, repeat: Infinity, delay }}
+                        className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-cyan-400' : 'bg-cyan-500'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* "Need help?" label */}
+                <div className={`px-4 pt-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider ${
+                  isDark ? 'text-slate-500' : 'text-slate-400'
+                }`}>
+                  Need help?
+                </div>
+
+                {/* Quick action links */}
+                {[
+                  { label: 'Book Demo', icon: '🗓️', query: 'I want to book a demo', color: 'from-cyan-500 to-blue-600' },
+                  { label: 'Product Questions', icon: '💡', query: 'I have product questions', color: 'from-blue-500 to-indigo-600' },
+                  { label: 'Documentation', icon: '📚', query: 'Show me the documentation', color: 'from-indigo-500 to-purple-600' },
+                  { label: 'Live Support', icon: '🎧', query: 'I need live support', color: 'from-purple-500 to-pink-500' },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => { openDezoAI(item.query); setFabMenuOpen(false); }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-200 group/item cursor-pointer border-none bg-transparent ${
+                      isDark
+                        ? 'hover:bg-slate-800/60 text-slate-300 hover:text-white'
+                        : 'hover:bg-slate-50 text-slate-700 hover:text-slate-900'
+                    }`}
+                  >
+                    <span className={`flex items-center justify-center w-7 h-7 rounded-xl bg-gradient-to-br ${item.color} text-white text-sm shadow-md flex-shrink-0 group-hover/item:scale-110 transition-transform duration-200`}>
+                      {item.icon}
+                    </span>
+                    <span className="text-xs font-semibold">{item.label}</span>
+                    <span className={`ml-auto text-[10px] opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 ${
+                      isDark ? 'text-cyan-400' : 'text-cyan-600'
+                    }`}>→</span>
+                  </button>
+                ))}
+
+                {/* Open full chat */}
+                <div className={`px-3 pb-3 pt-2 border-t mt-1 ${isDark ? 'border-slate-800/60' : 'border-slate-100'}`}>
+                  <button
+                    type="button"
+                    onClick={() => { setIsOpen(true); setFabMenuOpen(false); }}
+                    className={`w-full py-2 rounded-xl text-[11px] font-black uppercase tracking-wider text-white cursor-pointer border-none bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-cyan-500/30`}
+                  >
+                    Open Full Chat ✨
+                  </button>
+                </div>
+              </div>
+
+              {/* Panel caret arrow pointing to button */}
+              <div className="flex justify-end pr-5 -mt-px">
+                <div className={`w-3 h-3 rotate-45 border-r border-b ${
+                  isDark ? 'bg-slate-900/95 border-slate-800/80' : 'bg-white/98 border-slate-200/80'
+                }`} />
               </div>
             </div>
+
+            {/* ── Main FAB button ── */}
+            <div
+              onClick={(e) => { e.stopPropagation(); setFabMenuOpen(prev => !prev); }}
+              style={{ cursor: 'pointer' }}
+              className={`relative flex items-center justify-center w-[64px] h-[64px] rounded-full p-[2px] bg-gradient-to-tr from-cyan-400 via-blue-600 to-purple-600 transition-transform duration-300 hover:scale-105 transform-gpu ${
+                isDark
+                  ? 'shadow-[0_0_25px_rgba(6,182,212,0.45)] hover:shadow-[0_0_40px_rgba(6,182,212,0.7)]'
+                  : 'shadow-[0_8px_25px_rgba(6,182,212,0.35)] hover:shadow-[0_12px_35px_rgba(6,182,212,0.5)]'
+              }`}
+            >
+              {/* Inner frosted glass */}
+              <div className={`w-full h-full rounded-full flex items-center justify-center relative overflow-hidden backdrop-blur-md ${
+                isDark ? 'bg-slate-950/90' : 'bg-white/95 shadow-inner'
+              }`}>
+                <div className={`absolute inset-0 bg-gradient-to-tr opacity-80 ${
+                  isDark ? 'from-cyan-500/25 via-blue-500/15 to-purple-500/25' : 'from-cyan-400/20 via-blue-400/10 to-purple-400/20'
+                }`} />
+                <div className="relative z-10">
+                  <Bot className={`w-8 h-8 transition-colors duration-200 ${
+                    isDark ? 'text-cyan-300' : 'text-cyan-600'
+                  }`} />
+                </div>
+              </div>
+
+              {/* Online status dot */}
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 z-20">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" style={{ animationDuration: '3s' }} />
+                <span className={`relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 shadow-[0_0_10px_rgba(16,185,129,0.9)] ${
+                  isDark ? 'border-slate-950' : 'border-white'
+                }`} />
+              </span>
+            </div>
+            </div>{/* end fabMenuRef wrapper */}
           </motion.button>
         )}
       </AnimatePresence>
@@ -485,7 +645,7 @@ export const DezoAIWidget: React.FC = () => {
           <motion.div
             key="dezo-panel"
             role="dialog"
-            aria-label="DezoAI Assistant"
+            aria-label={`${botName} Assistant`}
             initial={{ opacity: 0, scale: 0.9, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 15 }}
@@ -550,7 +710,7 @@ export const DezoAIWidget: React.FC = () => {
                         ? 'bg-gradient-to-r from-white via-slate-100 to-cyan-300'
                         : 'bg-gradient-to-r from-slate-900 via-slate-800 to-cyan-600'
                     }`}>
-                      DezoAI Assistant
+                      {botName} Assistant
                     </span>
                     {/* Live Online Badge */}
                     <span className={`px-1.5 py-0.5 text-[9px] font-semibold rounded-full flex items-center gap-1 ${
@@ -1108,8 +1268,7 @@ export const DezoAIWidget: React.FC = () => {
       </AnimatePresence>
     </>,
     document.body
-
   );
-};
+});
 
 export default DezoAIWidget;

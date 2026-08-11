@@ -13,8 +13,9 @@ import {
   BarChart3,
   Globe,
   RefreshCw,
-  Eye
+  Eye,
 } from 'lucide-react';
+import { openAdminAIAssistant } from './AdminLayout';
 
 export interface StatCardItem {
   id: string;
@@ -213,7 +214,27 @@ export const AdminHeroCMS: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() =>
+              openAdminAIAssistant({
+                type: 'hero',
+                topic: formData.mainHeading,
+                onInsert: (fieldType, value) => {
+                  if (typeof value === 'object') {
+                    setFormData((prev) => ({ ...prev, ...value }));
+                  } else if (fieldType in formData) {
+                    setFormData((prev) => ({ ...prev, [fieldType]: value }));
+                  }
+                },
+              })
+            }
+            className="px-4 py-2.5 rounded-xl bg-cyan-400/20 hover:bg-cyan-400/30 border border-cyan-300/40 text-cyan-200 font-extrabold text-xs transition flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
+            Generate with AI
+          </button>
           <button
             type="button"
             onClick={handleReset}

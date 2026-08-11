@@ -87,7 +87,7 @@ const productModules: ProductModule[] = [
       'Rep Quota Attainment Leaderboards'
     ],
     metrics: [
-      { value: '$4.2M', label: 'Avg Pipeline Tracked' },
+      { value: '₹4.2M', label: 'Avg Pipeline Tracked' },
       { value: '99.1%', label: 'Forecast Accuracy' }
     ]
   },
@@ -132,7 +132,7 @@ export const ProductsPage: React.FC = () => {
     {
       name: 'Starter',
       desc: 'Ideal for small sales teams getting started with CRM automation.',
-      price: '$29',
+      price: '₹29',
       period: '/user/month',
       isPopular: false,
       features: [
@@ -146,7 +146,7 @@ export const ProductsPage: React.FC = () => {
     {
       name: 'Professional',
       desc: 'For growing revenue teams needing predictive AI intelligence.',
-      price: '$79',
+      price: '₹79',
       period: '/user/month',
       isPopular: true,
       features: [
@@ -240,7 +240,7 @@ export const ProductsPage: React.FC = () => {
               onClick={() => navigateTo('/contact-sales')}
               className="px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-cyan-400 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer shadow-sm"
             >
-              Contact Sales Team
+              Contact Us
             </button>
           </div>
         </div>
@@ -356,7 +356,7 @@ export const ProductsPage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center bg-slate-900/90 border border-slate-700 backdrop-blur-md px-4 py-2 rounded-xl text-xs text-white">
-                  <span className="font-bold">Active Pipeline: $14.8M</span>
+                  <span className="font-bold">Active Pipeline: ₹14.8M</span>
                   <span className="text-cyan-400 font-extrabold">98.4% Accuracy</span>
                 </div>
               </div>

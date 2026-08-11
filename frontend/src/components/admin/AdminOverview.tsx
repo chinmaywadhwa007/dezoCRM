@@ -1,75 +1,112 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Users,
-  Activity,
+  Sparkles,
+  Layout,
+  Package,
+  HelpCircle,
   FolderOpen,
-  Zap,
+  Globe,
   TrendingUp,
   ArrowUpRight,
-  ShieldCheck,
-  CheckCircle2,
   Clock,
-  Plus,
-  Lock,
-  Layers,
-  Database
+  Zap,
+  Sliders,
+  Mail,
+  ShieldCheck,
+  Star
 } from 'lucide-react';
+import { openAdminAIAssistant } from './AdminLayout';
 
 interface AdminOverviewProps {
   setActiveTab: (tab: string) => void;
   userRole?: string;
 }
 
-export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, userRole = 'SUPER_ADMIN' }) => {
-  const stats = [
+export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, userRole = 'ADMIN' }) => {
+  const websiteStats = [
     {
-      id: 'users',
-      title: 'Total System Users',
-      value: '24',
-      change: '+12% this month',
+      id: 'pages',
+      title: 'Published CMS Sections',
+      value: '7 Sections',
+      change: 'Hero, Products, FAQs, Footer',
       isPositive: true,
-      icon: Users,
-      color: 'from-cyan-500 to-blue-600',
-      badge: 'RBAC Active',
+      icon: Layout,
+      color: 'from-blue-600 to-cyan-500',
+      badge: 'Live',
     },
     {
-      id: 'sessions',
-      title: 'Active JWT Sessions',
-      value: '8',
-      change: '100% Secure',
+      id: 'products',
+      title: 'Active Products & Services',
+      value: '12 Items',
+      change: '+3 added this week',
       isPositive: true,
-      icon: Activity,
-      color: 'from-blue-600 to-indigo-600',
-      badge: '7d Rotation',
+      icon: Package,
+      color: 'from-cyan-500 to-teal-500',
+      badge: 'Catalog Active',
+    },
+    {
+      id: 'leads',
+      title: 'Customer Leads & Inquiries',
+      value: '48 Submissions',
+      change: '12 new this week',
+      isPositive: true,
+      icon: Mail,
+      color: 'from-indigo-600 to-purple-600',
+      badge: 'Form Active',
     },
     {
       id: 'media',
-      title: 'Media Files Uploaded',
-      value: '142',
-      change: '1.2 GB Storage',
+      title: 'Media Assets & Banners',
+      value: '142 Files',
+      change: '1.2 GB Storage Used',
       isPositive: true,
       icon: FolderOpen,
-      color: 'from-indigo-600 to-purple-600',
-      badge: 'Multer Ready',
-    },
-    {
-      id: 'health',
-      title: 'PostgreSQL Database',
-      value: 'Online',
-      change: 'Prisma Client v5',
-      isPositive: true,
-      icon: Database,
-      color: 'from-emerald-500 to-teal-600',
-      badge: 'Connected',
+      color: 'from-purple-600 to-pink-600',
+      badge: 'Library Ready',
     },
   ];
 
-  const recentLogs = [
-    { id: '1', action: 'User Created', detail: 'sarah.editor@dezoryn.com added as EDITOR', time: '10 mins ago', user: 'Admin' },
-    { id: '2', action: 'Token Refreshed', detail: 'JWT Access token rotated for superadmin@dezoryn.com', time: '25 mins ago', user: 'Super Admin' },
-    { id: '3', action: 'Media Upload', detail: 'hero_3d_component.png uploaded (2.8 MB)', time: '1 hour ago', user: 'Editor' },
-    { id: '4', action: 'Schema Seed', detail: 'Prisma seed database execution finished cleanly', time: '3 hours ago', user: 'System' },
+  const recentContentUpdates = [
+    { id: '1', action: 'Hero Section Updated', detail: 'Main headline and CTA buttons updated', time: '10 mins ago', user: 'Admin' },
+    { id: '2', action: 'New Contact Inquiry', detail: 'Sarah Jenkins (CTO, Aetheria Cloud) submitted lead form', time: '25 mins ago', user: 'Customer' },
+    { id: '3', action: 'SEO Meta Tags Generated', detail: 'AI Copilot generated meta description & keywords', time: '1 hour ago', user: 'AI Assistant' },
+    { id: '4', action: 'Product Catalog Edited', detail: 'Sales Intelligence Suite description updated', time: '3 hours ago', user: 'Admin' },
+  ];
+
+  const websiteCMSModules = [
+    {
+      id: 'pages',
+      title: 'Hero & Page Builder',
+      desc: 'Customize hero titles, gradient text, badge labels & CTA action buttons.',
+      icon: Layout,
+      color: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
+      tab: 'pages',
+    },
+    {
+      id: 'products',
+      title: 'Products & Solutions',
+      desc: 'Manage enterprise software products, features, metrics & pricing tiers.',
+      icon: Package,
+      color: 'text-cyan-500 bg-cyan-500/10 border-cyan-500/20',
+      tab: 'products',
+    },
+    {
+      id: 'testimonials',
+      title: 'Testimonials & Reviews',
+      desc: 'Add client reviews, customer ratings, executive quotes & case studies.',
+      icon: Star,
+      color: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
+      tab: 'testimonials',
+    },
+    {
+      id: 'faqs',
+      title: 'FAQ Manager',
+      desc: 'Create, organize & publish customer FAQs by product category.',
+      icon: HelpCircle,
+      color: 'text-purple-500 bg-purple-500/10 border-purple-500/20',
+      tab: 'faqs',
+    },
   ];
 
   return (
@@ -80,41 +117,41 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, user
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 dark:bg-cyan-500/10 border border-white/30 dark:border-cyan-500/30 text-white dark:text-cyan-400 text-xs font-black">
-              <Zap className="w-3.5 h-3.5" />
-              Website Control Hub
+              <Globe className="w-3.5 h-3.5" />
+              Website CMS Control Hub
             </div>
             <h2 className="text-2xl md:text-3xl font-black tracking-tight">
               Welcome back, <span className="text-cyan-200 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-cyan-400 dark:to-blue-400">{userRole}</span>
             </h2>
             <p className="text-xs md:text-sm text-blue-50 dark:text-slate-300 max-w-xl leading-relaxed">
-              Manage website content, user roles, database models, and security settings seamlessly from your centralized Dezoryn admin console.
+              Manage website content, landing pages, product catalog, customer inquiries, and AI copy generation from your centralized CMS hub.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={() => setActiveTab('users')}
-              className="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 dark:bg-gradient-to-r dark:from-blue-600 dark:to-cyan-600 dark:hover:from-blue-500 dark:hover:to-cyan-500 dark:text-white font-black text-xs transition shadow-lg shadow-black/10 flex items-center gap-2 cursor-pointer"
+              onClick={() => openAdminAIAssistant({ type: 'hero' })}
+              className="px-4 py-2.5 rounded-xl bg-white text-blue-700 hover:bg-blue-50 dark:bg-gradient-to-r dark:from-cyan-500 dark:to-blue-600 dark:hover:from-cyan-400 dark:hover:to-blue-500 dark:text-white font-black text-xs transition shadow-lg shadow-black/10 flex items-center gap-2 cursor-pointer"
             >
-              <Users className="w-4 h-4" />
-              Manage Users
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              AI Assistant
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('media')}
+              onClick={() => setActiveTab('pages')}
               className="px-4 py-2.5 rounded-xl bg-blue-700/60 hover:bg-blue-700 dark:bg-slate-800 dark:hover:bg-slate-700 border border-white/20 dark:border-slate-700 text-white dark:text-slate-200 font-extrabold text-xs transition flex items-center gap-2 cursor-pointer"
             >
-              <FolderOpen className="w-4 h-4" />
-              Upload Asset
+              <Layout className="w-4 h-4" />
+              Edit Hero Page
             </button>
           </div>
         </div>
       </div>
 
-      {/* KPI Stats Grid */}
+      {/* Website KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-        {stats.map((stat, idx) => {
+        {websiteStats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
             <motion.div
@@ -142,8 +179,8 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, user
                 </span>
               </div>
 
-              <div className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                <TrendingUp className="w-3.5 h-3.5" />
+              <div className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
                 <span>{stat.change}</span>
               </div>
             </motion.div>
@@ -151,17 +188,53 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, user
         })}
       </div>
 
-      {/* Main Content Split: System Health & Recent Activity */}
+      {/* Website CMS Quick Management Modules Grid */}
+      <div className="space-y-3">
+        <h3 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <Zap className="w-4 h-4 text-cyan-500" />
+          Quick Website CMS Managers
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {websiteCMSModules.map((mod) => {
+            const Icon = mod.icon;
+            return (
+              <div
+                key={mod.id}
+                onClick={() => setActiveTab(mod.tab)}
+                className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-cyan-500/50 hover:shadow-md transition cursor-pointer group flex flex-col justify-between"
+              >
+                <div className="space-y-2.5">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${mod.color} group-hover:scale-105 transition-transform`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-sm font-extrabold text-slate-900 dark:text-white group-hover:text-cyan-400 transition-colors">
+                    {mod.title}
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    {mod.desc}
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-600 dark:text-cyan-400">
+                  <span>Open Manager</span>
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Main Content Split: Recent Content Activity & Live Status */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity List (2 Columns) */}
+        {/* Recent Website Activity List (2 Columns) */}
         <div className="lg:col-span-2 p-5 md:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
-                Recent Audit Trail & Activity
+                Recent Website Activity & Updates
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Live system event logging and authentication events
+                Live audit trail of website copy changes, lead submissions, and AI content updates
               </p>
             </div>
             <button
@@ -169,12 +242,12 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, user
               onClick={() => setActiveTab('audit')}
               className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
             >
-              View Logs <ArrowUpRight className="w-3.5 h-3.5" />
+              View Full History <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-            {recentLogs.map((log) => (
+            {recentContentUpdates.map((log) => (
               <div key={log.id} className="py-3.5 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
@@ -185,7 +258,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, user
                       <span className="text-xs font-extrabold text-slate-900 dark:text-white">
                         {log.action}
                       </span>
-                      <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                      <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-cyan-600 dark:text-cyan-400 border border-slate-200 dark:border-slate-700">
                         {log.user}
                       </span>
                     </div>
@@ -202,48 +275,55 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ setActiveTab, user
           </div>
         </div>
 
-        {/* System Status & Placeholder Modules (1 Column) */}
+        {/* Live Website Status Panel (1 Column) */}
         <div className="p-5 md:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-5">
           <h3 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-500" />
-            System Architecture
+            Live Website Status
           </h3>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/90 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span className="font-bold text-slate-700 dark:text-slate-300">REST API v1</span>
+                <Globe className="w-4 h-4 text-emerald-500" />
+                <span className="font-bold text-slate-700 dark:text-slate-300">Website Deployment</span>
               </div>
-              <span className="font-mono text-[10px] text-emerald-600 dark:text-emerald-500 font-bold">200 OK</span>
+              <span className="font-mono text-[10px] text-emerald-600 dark:text-emerald-500 font-bold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 px-2 py-0.5 rounded-md">Published</span>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/90 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Lock className="w-4 h-4 text-cyan-500" />
-                <span className="font-bold text-slate-700 dark:text-slate-300">JWT Auth + Cookies</span>
+                <Mail className="w-4 h-4 text-cyan-500" />
+                <span className="font-bold text-slate-700 dark:text-slate-300">Lead Contact Forms</span>
               </div>
-              <span className="font-mono text-[10px] text-cyan-600 dark:text-cyan-500 font-bold">Active</span>
+              <span className="font-mono text-[10px] text-cyan-600 dark:text-cyan-500 font-bold bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-300 dark:border-cyan-800 px-2 py-0.5 rounded-md">Receiving</span>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/90 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Layers className="w-4 h-4 text-indigo-500" />
-                <span className="font-bold text-slate-700 dark:text-slate-300">RBAC Permissions</span>
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span className="font-bold text-slate-700 dark:text-slate-300">AI Copy Generator</span>
               </div>
-              <span className="font-mono text-[10px] text-indigo-600 dark:text-indigo-500 font-bold">3 Roles</span>
+              <span className="font-mono text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 px-2 py-0.5 rounded-md">GPT-4 Engine</span>
             </div>
           </div>
 
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
             <div className="p-4 rounded-xl bg-cyan-50/80 dark:bg-gradient-to-br dark:from-blue-900/30 dark:to-cyan-900/30 border border-cyan-200 dark:border-cyan-500/30 text-cyan-950 dark:text-cyan-300 text-xs font-semibold space-y-2">
               <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Plus className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                Modules Ready for Connection
+                <Sliders className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                Website Settings Quick Access
               </div>
               <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                Frontend dashboard structure, top navbar, responsive sidebar, breadcrumbs, and profile menu foundation are ready to connect to backend APIs.
+                Update global website name, brand logo, favicon, maintenance mode, and SEO metadata tags anytime.
               </p>
+              <button
+                type="button"
+                onClick={() => setActiveTab('site-settings')}
+                className="mt-1 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] transition cursor-pointer"
+              >
+                Open Site Settings
+              </button>
             </div>
           </div>
         </div>

@@ -217,7 +217,7 @@ const EnterpriseCTAButton: React.FC<EnterpriseCTAButtonProps> = ({
 // ─────────────────────────────────────────────────────────────
 // HERO CONTENT COMPONENT (Direct PostgreSQL Database Fetch)
 // ─────────────────────────────────────────────────────────────
-export const HeroContent: React.FC = () => {
+export const HeroContent: React.FC = React.memo(() => {
   const { navigateTo } = useNavigation();
 
   const [heroData, setHeroData] = useState(DEFAULT_HERO_DATA);
@@ -228,7 +228,7 @@ export const HeroContent: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data) {
-          setHeroData({
+          const fetched = {
             badgeText: data.data.badgeText || DEFAULT_HERO_DATA.badgeText,
             badgeIcon: data.data.badgeIcon || DEFAULT_HERO_DATA.badgeIcon,
             mainHeading: data.data.mainHeading || DEFAULT_HERO_DATA.mainHeading,
@@ -240,7 +240,10 @@ export const HeroContent: React.FC = () => {
             secondaryBtnLink: data.data.secondaryBtnLink || DEFAULT_HERO_DATA.secondaryBtnLink,
             statsCards: Array.isArray(data.data.statsCards) && data.data.statsCards.length > 0 ? data.data.statsCards : DEFAULT_HERO_DATA.statsCards,
             techTags: Array.isArray(data.data.techTags) && data.data.techTags.length > 0 ? data.data.techTags : DEFAULT_HERO_DATA.techTags,
-          });
+          };
+          if (JSON.stringify(fetched) !== JSON.stringify(DEFAULT_HERO_DATA)) {
+            setHeroData(fetched);
+          }
         }
       })
       .catch(() => {
@@ -253,23 +256,13 @@ export const HeroContent: React.FC = () => {
   return (
     <div className="flex flex-col items-start text-left max-w-xl xl:max-w-2xl py-2 font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Category Subtitle Badge */}
-      <motion.span
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="text-xs sm:text-sm font-extrabold tracking-widest text-blue-600 dark:text-cyan-400 uppercase mb-3 flex items-center gap-2"
-      >
+      <span className="text-xs sm:text-sm font-extrabold tracking-widest text-blue-600 dark:text-cyan-400 uppercase mb-3 flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
         {heroData.badgeText}
-      </motion.span>
+      </span>
 
-      {/* Main Heading */}
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.08] mb-4 select-none"
-      >
+      {/* Main Heading (Instant Paint for Optimal LCP) */}
+      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.08] mb-4 select-none">
         <motion.span
           whileHover={{ y: -2 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -285,15 +278,10 @@ export const HeroContent: React.FC = () => {
         >
           {heroData.gradientHeading}
         </motion.span>
-      </motion.h1>
+      </h1>
 
       {/* Product Tag Chips Strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
-        className="flex flex-wrap items-center gap-2 mb-6"
-      >
+      <div className="flex flex-wrap items-center gap-2 mb-6">
         {heroData.techTags.map((tagName, idx) => {
           const TagIcon = tagIcons[idx % tagIcons.length];
           return (
@@ -317,17 +305,12 @@ export const HeroContent: React.FC = () => {
             </motion.div>
           );
         })}
-      </motion.div>
+      </div>
 
       {/* Description Paragraph */}
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-8 max-w-lg font-normal"
-      >
+      <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-8 max-w-lg font-normal">
         {heroData.description}
-      </motion.p>
+      </p>
 
       {/* CTA Buttons */}
       <motion.div
@@ -378,4 +361,4 @@ export const HeroContent: React.FC = () => {
       </div>
     </div>
   );
-};
+});

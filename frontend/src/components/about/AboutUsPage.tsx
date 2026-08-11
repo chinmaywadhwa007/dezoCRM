@@ -133,7 +133,7 @@ export const AboutUsPage: React.FC = () => {
               onClick={() => navigateTo('/contact-sales')}
               className="px-6 py-3.5 rounded-xl bg-slate-900 dark:bg-slate-950 text-white font-bold text-xs hover:bg-slate-800 transition cursor-pointer shadow-sm"
             >
-              Contact Sales Team
+              Contact Us
             </button>
           </div>
         </div>

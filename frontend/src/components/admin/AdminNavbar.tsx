@@ -1,5 +1,6 @@
 import React from 'react';
-import { Menu, Search, Moon, Sun } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, Search, Moon, Sun, Sparkles } from 'lucide-react';
 import { AdminNotifications } from './AdminNotifications';
 import { AdminProfileMenu } from './AdminProfileMenu';
 import { AdminBreadcrumbs } from './AdminBreadcrumbs';
@@ -11,6 +12,7 @@ interface AdminNavbarProps {
   activeTab: string;
   userRole?: string;
   onLogout?: () => void;
+  onOpenAI?: () => void;
 }
 
 export const AdminNavbar: React.FC<AdminNavbarProps> = ({
@@ -18,11 +20,12 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({
   isDark,
   onToggleTheme,
   activeTab,
-  userRole = 'SUPER_ADMIN',
+  userRole = 'ADMIN',
   onLogout,
+  onOpenAI,
 }) => {
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 px-4 lg:px-6 flex items-center justify-between font-['Plus_Jakarta_Sans',sans-serif] transition-colors">
+    <header className="sticky top-0 z-30 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 px-4 lg:px-6 flex items-center justify-between font-['Plus_Jakarta_Sans',sans-serif] transition-colors duration-300">
       {/* Left: Mobile Sidebar Trigger & Breadcrumbs */}
       <div className="flex items-center gap-2 sm:gap-3">
         <button
@@ -52,21 +55,46 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({
         </div>
       </div>
 
-      {/* Right: Actions (Theme Toggle, Notifications, Profile) */}
+      {/* Right: Actions (AI Assistant, Theme Toggle, Notifications, Profile) */}
       <div className="flex items-center gap-2.5">
-        {/* Dark Mode Toggle */}
+        {/* AI Assistant Trigger Button */}
         <button
           type="button"
-          onClick={onToggleTheme}
-          aria-label="Toggle Dark Mode"
-          className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 transition cursor-pointer"
+          onClick={onOpenAI}
+          title="Open AI Content Assistant"
+          className="px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:via-blue-500 hover:to-purple-500 text-white font-extrabold text-xs shadow-md shadow-cyan-500/20 flex items-center gap-1.5 transition cursor-pointer"
         >
-          {isDark ? (
-            <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
-          )}
+          <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
+          <span className="hidden sm:inline">AI Assistant</span>
         </button>
+
+        {/* Ultra-Smooth Animated Dark Mode Toggle */}
+        <motion.button
+          type="button"
+          onClick={onToggleTheme}
+          whileTap={{ scale: 0.88 }}
+          whileHover={{ scale: 1.05 }}
+          title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+          aria-label="Toggle Dark Mode"
+          className="relative p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 transition cursor-pointer overflow-hidden shadow-xs"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={isDark ? 'dark' : 'light'}
+              initial={{ y: -16, opacity: 0, rotate: -90, scale: 0.5 }}
+              animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ y: 16, opacity: 0, rotate: 90, scale: 0.5 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="flex items-center justify-center"
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" />
+              ) : (
+                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 drop-shadow-[0_0_8px_rgba(79,70,229,0.3)]" />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </motion.button>
 
         {/* Notifications Dropdown */}
         <AdminNotifications />
@@ -74,7 +102,7 @@ export const AdminNavbar: React.FC<AdminNavbarProps> = ({
         {/* Profile Dropdown Menu */}
         <AdminProfileMenu
           user={{
-            name: userRole === 'SUPER_ADMIN' ? 'Super Admin' : userRole === 'ADMIN' ? 'System Admin' : 'Content Editor',
+            name: 'System Admin',
             email: `${userRole.toLowerCase()}@dezoryn.com`,
             role: userRole,
           }}

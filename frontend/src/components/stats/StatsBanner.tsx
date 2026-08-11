@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { openDezoAI } from '../ai/DezoAIWidget';
 
-export const StatsBanner: React.FC = () => {
+export const StatsBanner: React.FC = React.memo(() => {
   const stats = [
     {
       icon: <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
@@ -50,9 +50,9 @@ export const StatsBanner: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0, y: 25 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 rounded-[28px] p-6 lg:p-8 shadow-2xl shadow-blue-900/10 dark:shadow-slate-950/70 flex flex-col xl:flex-row items-center justify-between gap-6 lg:gap-8 transition-colors duration-300 overflow-hidden"
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.5 }}
+        className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transform-gpu border border-slate-200/90 dark:border-slate-800 rounded-[28px] p-6 lg:p-8 shadow-xl shadow-blue-900/10 dark:shadow-slate-950/70 flex flex-col xl:flex-row items-center justify-between gap-6 lg:gap-8 transition-colors duration-300 overflow-hidden"
       >
         {/* Stats items grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6 flex-1 w-full min-w-0">
@@ -103,6 +103,6 @@ export const StatsBanner: React.FC = () => {
       </motion.div>
     </div>
   );
-};
+});
 
 

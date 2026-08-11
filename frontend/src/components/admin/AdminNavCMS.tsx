@@ -35,7 +35,7 @@ const DEFAULT_NAV: NavItemData[] = [
   { id: '3', label: 'Careers', route: '/careers', order: 2, isVisible: true, isHighlight: false },
   { id: '4', label: 'Pricing', route: '/pricing', order: 3, isVisible: true, isHighlight: false },
   { id: '5', label: 'About Us', route: '/about', order: 4, isVisible: true, isHighlight: false },
-  { id: '6', label: 'Contact Sales', route: '/contact-sales', order: 5, isVisible: true, isHighlight: false },
+  { id: '6', label: 'Contact', route: '/contact-sales', order: 5, isVisible: true, isHighlight: false },
 ];
 
 export const AdminNavCMS: React.FC = () => {

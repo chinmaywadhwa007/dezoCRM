@@ -98,7 +98,7 @@ const marketplaceCards: CardItem[] = [
   }
 ];
 
-export const MarketplaceSection: React.FC = () => {
+export const MarketplaceSection: React.FC = React.memo(() => {
   const { navigateTo } = useNavigation();
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
@@ -120,6 +120,11 @@ export const MarketplaceSection: React.FC = () => {
     };
 
     const loop = () => {
+      if (document.hidden) {
+        animId = requestAnimationFrame(loop);
+        return;
+      }
+
       currentMouse.current.x = lerp(currentMouse.current.x, targetMouse.current.x, 0.015);
       currentMouse.current.y = lerp(currentMouse.current.y, targetMouse.current.y, 0.015);
 
@@ -420,4 +425,4 @@ export const MarketplaceSection: React.FC = () => {
       </div>
     </section>
   );
-};
+});

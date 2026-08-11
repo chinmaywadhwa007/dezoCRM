@@ -15,8 +15,16 @@ import {
   Navigation,
   Package,
   DollarSign,
-  MessageSquareQuote
+  MessageSquareQuote,
+  HelpCircle,
+  Briefcase,
+  PhoneCall,
+  LayoutGrid,
+  Tv,
+  Cog
 } from 'lucide-react';
+
+
 import { useNavigation } from '../../utils/NavigationContext';
 
 export interface MenuItem {
@@ -31,15 +39,27 @@ const MENU_ITEMS: MenuItem[] = [
   { id: 'overview', label: 'Overview & Analytics', icon: LayoutDashboard },
   { id: 'users', label: 'User Management', icon: Users, badge: 'RBAC', badgeColor: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400' },
   { id: 'pages', label: 'Page Builder', icon: FileText },
+  { id: 'about', label: 'About Section', icon: Sparkles, badge: 'About CMS', badgeColor: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400' },
   { id: 'navigation', label: 'Navigation', icon: Navigation, badge: 'Menus', badgeColor: 'bg-purple-500/20 text-purple-600 dark:text-purple-400' },
-  { id: 'products', label: 'Products', icon: Package, badge: 'Catalog', badgeColor: 'bg-blue-500/20 text-blue-600 dark:text-blue-400' },
+  { id: 'products', label: 'Marketplace Manager', icon: Package, badge: '12 Modules', badgeColor: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400' },
   { id: 'pricing', label: 'Pricing', icon: DollarSign, badge: 'Plans', badgeColor: 'bg-violet-500/20 text-violet-600 dark:text-violet-400' },
   { id: 'testimonials', label: 'Testimonials', icon: MessageSquareQuote, badge: 'Reviews', badgeColor: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' },
+  { id: 'faqs', label: 'FAQ Management', icon: HelpCircle, badge: 'Accordion', badgeColor: 'bg-amber-500/20 text-amber-600 dark:text-amber-400' },
+  { id: 'jobs', label: 'Careers & Hiring', icon: Briefcase, badge: 'Jobs', badgeColor: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' },
+  { id: 'contact', label: 'Contact Info', icon: PhoneCall, badge: 'Reach', badgeColor: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400' },
+  { id: 'footer', label: 'Footer CMS', icon: LayoutGrid, badge: 'Footer', badgeColor: 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400' },
+  { id: 'demos', label: 'Demo Center', icon: Tv, badge: 'Demos', badgeColor: 'bg-blue-500/20 text-blue-600 dark:text-blue-400' },
   { id: 'blog', label: 'Blog & Articles', icon: Layers },
+
+
   { id: 'media', label: 'Media Library', icon: FolderOpen, badge: 'Uploads', badgeColor: 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400' },
-  { id: 'settings', label: 'System Settings', icon: Settings },
+  { id: 'site-settings', label: 'Website Settings', icon: Cog, badge: 'Config', badgeColor: 'bg-teal-500/20 text-teal-600 dark:text-teal-400' },
+  { id: 'settings', label: 'Theme & Appearance', icon: Settings },
   { id: 'audit', label: 'Audit Logs', icon: ShieldCheck, badge: 'Logs', badgeColor: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' },
 ];
+
+
+
 
 
 interface AdminSidebarProps {
@@ -58,7 +78,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   setActiveTab,
   isOpen,
   onClose,
-  userRole = 'SUPER_ADMIN',
+  userRole = 'ADMIN',
   onLogout,
   isDark = true,
   onHoverChange,

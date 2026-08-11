@@ -7,132 +7,44 @@ import {
   Zap, 
   ChevronDown,
   GraduationCap,
-  Hotel,
   Building,
-  ShoppingBag,
-  Star
+  Hotel,
+  RefreshCw,
+  AlertCircle,
+  Info,
+  InfoIcon
 } from 'lucide-react';
 import { useNavigation } from '../../utils/NavigationContext';
+import type { PricingPlan, PricingSource } from '../../types/pricing';
+import { crmPricingApi, estatePricingApi, schoolycorePricingApi, schoolycoreLitePricingApi } from '../../services/pricing';
+import { normalizeCrmPlan, normalizeEstatePlan, normalizeSchoolycorePlan, normalizeSchoolycoreLitePlan, formatPrice } from '../../utils/pricingAdapters';
+import { PlanDetailsModal } from './PlanDetailsModal';
 
-// ── CMS Dynamic Plan type ─────────────────────
-interface CmsPlan {
-  id: string;
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
-  buttonText: string;
-  buttonUrl: string;
-  isHighlight: boolean;
-  ribbon: string | null;
-  colorTheme: string;
-  order: number;
-  isEnabled: boolean;
-}
-
-const COLOR_GRADIENT: Record<string, string> = {
-  blue: 'from-blue-600 to-cyan-500',
-  violet: 'from-violet-600 to-purple-500',
-  emerald: 'from-emerald-600 to-teal-500',
-  rose: 'from-rose-600 to-pink-500',
-  amber: 'from-amber-500 to-orange-500',
-  slate: 'from-slate-600 to-slate-700',
-  indigo: 'from-indigo-600 to-blue-600',
-  cyan: 'from-cyan-500 to-blue-500',
-};
-
-const COLOR_RING: Record<string, string> = {
-  blue: 'ring-blue-500', violet: 'ring-violet-500', emerald: 'ring-emerald-500',
-  rose: 'ring-rose-500', amber: 'ring-amber-500', slate: 'ring-slate-500',
-  indigo: 'ring-indigo-500', cyan: 'ring-cyan-500',
-};
-
-const COLOR_BADGE: Record<string, string> = {
-  blue: 'bg-blue-600', violet: 'bg-violet-600', emerald: 'bg-emerald-600',
-  rose: 'bg-rose-600', amber: 'bg-amber-500', slate: 'bg-slate-600',
-  indigo: 'bg-indigo-600', cyan: 'bg-cyan-500',
-};
-
-
-interface PricingTier {
-  name: string;
-  desc: string;
-  monthlyPrice: number | 'Custom';
-  annualPrice: number | 'Custom';
-  isPopular?: boolean;
-  features: string[];
-  ctaText: string;
-  ctaAction: 'demo' | 'contact';
-}
-
-interface ProductPricing {
-  id: string;
+interface SourceOption {
+  id: PricingSource;
   name: string;
   badge: string;
   icon: React.ReactNode;
   color: string;
   accentBg: string;
-  tiers: PricingTier[];
 }
 
-const marketplacePricingData: ProductPricing[] = [
+const PRICING_SOURCES: SourceOption[] = [
   {
-    id: 'dezocrm',
-    name: 'Dezoryn Sales',
+    id: 'crm',
+    name: 'Dezoryn CRM',
     badge: 'CRM PLATFORM',
     icon: <Zap className="w-5 h-5 text-blue-600 dark:text-cyan-400" />,
     color: 'text-blue-600 dark:text-cyan-400',
     accentBg: 'bg-blue-50 dark:bg-cyan-500/10 border-blue-200 dark:border-cyan-400/30',
-    tiers: [
-      {
-        name: 'Starter',
-        desc: 'Essential pipeline management & basic lead scoring for small sales teams.',
-        monthlyPrice: 29,
-        annualPrice: 24,
-        features: [
-          'Up to 10 Sales Rep Seats',
-          'Basic AI Lead Quality Scoring',
-          'Automated Email & SMS Cadences',
-          'Standard Kanban Deal Pipelines',
-          '99.5% SLA Uptime Guarantee'
-        ],
-        ctaText: 'Start 14-Day Free Trial',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Professional',
-        desc: 'Advanced predictive intelligence, multi-channel cadences & forecasting.',
-        monthlyPrice: 79,
-        annualPrice: 64,
-        isPopular: true,
-        features: [
-          'Unlimited Sales Rep Seats',
-          '50+ Behavioral Intent Lead Scoring',
-          'Multi-Channel Cadence Automation',
-          'AI Quarterly Revenue Forecasting',
-          'Multi-Currency & Custom Fields',
-          'Dedicated Onboarding Specialist'
-        ],
-        ctaText: 'Schedule Live Walkthrough',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Enterprise',
-        desc: 'Dedicated cloud cluster, custom AI model training & SOC2 compliance.',
-        monthlyPrice: 'Custom',
-        annualPrice: 'Custom',
-        features: [
-          'Isolated Enterprise Cloud Cluster',
-          'SOC2 Type II, GDPR & HIPAA Security',
-          'Custom AI Model Fine-Tuning',
-          '24/7 Priority Support & 15 Min SLA',
-          'Dedicated Technical Account Manager',
-          'Custom SSO (Okta, Azure AD, SAML)'
-        ],
-        ctaText: 'Contact Enterprise Sales',
-        ctaAction: 'contact'
-      }
-    ]
+  },
+  {
+    id: 'estate',
+    name: 'Real Estate OS',
+    badge: 'PROPERTY ERP',
+    icon: <Hotel className="w-5 h-5 text-rose-600 dark:text-rose-400" />,
+    color: 'text-rose-600 dark:text-rose-400',
+    accentBg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-400/30',
   },
   {
     id: 'schoolycore',
@@ -141,267 +53,123 @@ const marketplacePricingData: ProductPricing[] = [
     icon: <GraduationCap className="w-5 h-5 text-violet-600 dark:text-violet-400" />,
     color: 'text-violet-600 dark:text-violet-400',
     accentBg: 'bg-violet-50 dark:bg-violet-500/10 border-violet-200 dark:border-violet-400/30',
-    tiers: [
-      {
-        name: 'Academy',
-        desc: 'Single campus management for K-12 schools & coaching centers.',
-        monthlyPrice: 49,
-        annualPrice: 39,
-        features: [
-          'Up to 500 Active Students',
-          'Student Admission & Fee Management',
-          'Automated Attendance & SMS Alerts',
-          'Report Card Generator & Exams',
-          'Parent Portal Web App'
-        ],
-        ctaText: 'Book Campus Demo',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Institution',
-        desc: 'Multi-branch ERP for growing colleges & educational groups.',
-        monthlyPrice: 129,
-        annualPrice: 99,
-        isPopular: true,
-        features: [
-          'Up to 3,000 Active Students',
-          'Multi-Branch Campus Management',
-          'Biometric & RFID Attendance Sync',
-          'Online Fee Gateway Integration',
-          'Library & Hostel Operations',
-          'Dedicated School Support Team'
-        ],
-        ctaText: 'Request Institutional Quote',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'University Cloud',
-        desc: 'Custom university system with unlimited students & AI proctoring.',
-        monthlyPrice: 'Custom',
-        annualPrice: 'Custom',
-        features: [
-          'Unlimited Campuses & Students',
-          'AI-Powered Exam Proctoring',
-          'Custom University ERP Modules',
-          'Alumni & Placement Portal',
-          '24/7 Priority Support & On-Site Setup',
-          'White-Label Mobile App'
-        ],
-        ctaText: 'Talk to Education Advisor',
-        ctaAction: 'contact'
-      }
-    ]
   },
   {
-    id: 'hms',
-    name: 'Hospitality HMS',
-    badge: 'HOTEL OS',
-    icon: <Hotel className="w-5 h-5 text-rose-600 dark:text-rose-400" />,
-    color: 'text-rose-600 dark:text-rose-400',
-    accentBg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-400/30',
-    tiers: [
-      {
-        name: 'Boutique',
-        desc: 'Front desk & booking management for boutique hotels & B&Bs.',
-        monthlyPrice: 69,
-        annualPrice: 55,
-        features: [
-          'Up to 25 Rooms / Units',
-          'Front Desk Check-In & Check-Out',
-          'Direct Booking Engine & Invoicing',
-          'Housekeeping Task Management',
-          'Basic Revenue Analytics'
-        ],
-        ctaText: 'Start Free Demo',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Resort & Chain',
-        desc: 'Full PMS & channel manager for multi-property hotels & resorts.',
-        monthlyPrice: 189,
-        annualPrice: 149,
-        isPopular: true,
-        features: [
-          'Up to 150 Rooms / Properties',
-          '2-Way Channel Manager (Booking, Agoda)',
-          'Restaurant POS & Room Service',
-          'Dynamic AI Room Rate Pricing',
-          'Guest WhatsApp Automated Messaging',
-          'Multi-Currency Payment Processing'
-        ],
-        ctaText: 'Explore Hotel OS Demo',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Global Enterprise',
-        desc: 'Unlimited hotel properties with central reservation system (CRS).',
-        monthlyPrice: 'Custom',
-        annualPrice: 'Custom',
-        features: [
-          'Unlimited Hotel Chains & Rooms',
-          'Central Reservation System (CRS)',
-          'Spa, Golf & Convention Management',
-          'Custom Oracle / SAP Integration',
-          'Dedicated Hotel Solutions Architect',
-          '99.99% Guaranteed SLA'
-        ],
-        ctaText: 'Contact Hospitality Team',
-        ctaAction: 'contact'
-      }
-    ]
-  },
-  {
-    id: 'hrms',
-    name: 'Enterprise HRMS',
-    badge: 'HUMAN CAPITAL',
+    id: 'schoolycore-lite',
+    name: 'SchoolyCore Lite',
+    badge: 'LITE MODULE',
     icon: <Building className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
     color: 'text-emerald-600 dark:text-emerald-400',
     accentBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-400/30',
-    tiers: [
-      {
-        name: 'Team',
-        desc: 'Automated payroll, leave & attendance for growing companies.',
-        monthlyPrice: 39,
-        annualPrice: 31,
-        features: [
-          'Up to 50 Employees',
-          '1-Click Automated Payroll Processing',
-          'Leave & Holiday Tracker',
-          'Employee Self-Service Portal',
-          'Tax & Statutory Compliance'
-        ],
-        ctaText: 'Schedule HR Walkthrough',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Growth',
-        desc: 'Performance appraisal, recruiting ATS & employee onboarding.',
-        monthlyPrice: 99,
-        annualPrice: 79,
-        isPopular: true,
-        features: [
-          'Up to 250 Employees',
-          'Applicant Tracking System (ATS)',
-          '360-Degree Performance Appraisals',
-          'Expense Reimbursement Approval',
-          'Biometric Geo-Fenced Check-In',
-          'Custom HR Workflows & Analytics'
-        ],
-        ctaText: 'Request Growth Demo',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Enterprise HR',
-        desc: 'Global payroll across 50+ countries with custom compliance.',
-        monthlyPrice: 'Custom',
-        annualPrice: 'Custom',
-        features: [
-          'Unlimited Global Employees',
-          'Multi-Country Payroll & Tax Sync',
-          'Custom Organization Chart Builder',
-          'Whistleblower & Anonymous Feedback',
-          'Dedicated HR Success Manager',
-          'Custom HRIS API Integration'
-        ],
-        ctaText: 'Contact HR Sales',
-        ctaAction: 'contact'
-      }
-    ]
   },
-  {
-    id: 'inventorypro',
-    name: 'InventoryPro Suite',
-    badge: 'SUPPLY CHAIN',
-    icon: <ShoppingBag className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
-    color: 'text-amber-600 dark:text-amber-400',
-    accentBg: 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-400/30',
-    tiers: [
-      {
-        name: 'Standard',
-        desc: 'Stock tracking & purchase order automation for retail & wholesale.',
-        monthlyPrice: 59,
-        annualPrice: 47,
-        features: [
-          'Up to 2 Warehouses / Stores',
-          'Barcode Scanning & SKU Generator',
-          'Purchase Order & Vendor Tracking',
-          'Low Stock Automated Alerts',
-          'Basic Sales & Inventory Reports'
-        ],
-        ctaText: 'Try Inventory Demo',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Pro Supply',
-        desc: 'Multi-warehouse batch, serial & expiry tracking with AI reorder.',
-        monthlyPrice: 149,
-        annualPrice: 119,
-        isPopular: true,
-        features: [
-          'Up to 10 Warehouses & Outlets',
-          'Batch, Serial Number & Expiry Tracking',
-          'AI Demand Forecasting & Auto-Reorder',
-          'Shopify, Amazon & WooCommerce Sync',
-          'Return & RMA Logistics Workflow',
-          'Dedicated Warehouse Onboarding'
-        ],
-        ctaText: 'Book Supply Chain Demo',
-        ctaAction: 'demo'
-      },
-      {
-        name: 'Enterprise Supply',
-        desc: 'Custom WMS, 3PL logistics & RFID manufacturing tracking.',
-        monthlyPrice: 'Custom',
-        annualPrice: 'Custom',
-        features: [
-          'Unlimited Global Warehouses',
-          'Warehouse Management System (WMS)',
-          '3PL & Fleet Tracking Integration',
-          'Custom Bill of Materials (BOM)',
-          '24/7 Priority Support & 15 Min SLA',
-          'Dedicated Logistics Architect'
-        ],
-        ctaText: 'Talk to Supply Chain Sales',
-        ctaAction: 'contact'
-      }
-    ]
-  }
 ];
 
 export const PricingPage: React.FC = () => {
   const { navigateTo } = useNavigation();
-  const [selectedProduct, setSelectedProduct] = useState<string>('dezocrm');
+  const [pricingSource, setPricingSource] = useState<PricingSource>('crm');
   const [isAnnual, setIsAnnual] = useState<boolean>(true);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [cmsPlans, setCmsPlans] = useState<CmsPlan[]>([]);
+
+  // API Data State
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Detail Modal State
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+
+  // Manual Retry Trigger State
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/v1/pricing?enabled=true')
-      .then(r => r.json())
-      .then(data => { if (data.success && data.data.length > 0) setCmsPlans(data.data); })
-      .catch(() => {});
-  }, []);
+    const controller = new AbortController();
+    setIsFetching(true);
+    setError(null);
 
-  const activeProduct = marketplacePricingData.find(p => p.id === selectedProduct) || marketplacePricingData[0];
+    const loadPlans = async () => {
+      try {
+        let normalizedPlans: PricingPlan[] = [];
 
+        if (pricingSource === 'crm') {
+          const response = await crmPricingApi.getPlans(
+            { isVisible: true },
+            { signal: controller.signal }
+          );
+          if (response.data && Array.isArray(response.data)) {
+            normalizedPlans = response.data.map(normalizeCrmPlan);
+          }
+        } else if (pricingSource === 'estate') {
+          const response = await estatePricingApi.getPlans(
+            { visibleOnWebsite: true, type: 'AGENT' },
+            { signal: controller.signal }
+          );
+          if (response.data && Array.isArray(response.data)) {
+            normalizedPlans = response.data.map(normalizeEstatePlan);
+          }
+        } else if (pricingSource === 'schoolycore') {
+          const response = await schoolycorePricingApi.getPlans(
+            { visibleOnWebsite: true, type: 'BUILDER' },
+            { signal: controller.signal }
+          );
+          if (response.data && Array.isArray(response.data)) {
+            normalizedPlans = response.data.map(normalizeSchoolycorePlan);
+          }
+        } else if (pricingSource === 'schoolycore-lite') {
+          const response = await schoolycoreLitePricingApi.getPlans(
+            {},
+            { signal: controller.signal }
+          );
+          if (response.data && Array.isArray(response.data)) {
+            normalizedPlans = response.data.map(normalizeSchoolycoreLitePlan);
+          }
+        }
+
+        if (!controller.signal.aborted) {
+          setPlans(normalizedPlans);
+          setIsFetching(false);
+        }
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+        if (!controller.signal.aborted) {
+          console.error(`Failed to fetch pricing plans for source [${pricingSource}]:`, err);
+          setError(
+            err instanceof Error
+              ? err.message
+              : `Failed to connect to ${pricingSource.toUpperCase()} backend pricing API.`
+          );
+          setIsFetching(false);
+        }
+      }
+    };
+
+    loadPlans();
+
+    return () => {
+      controller.abort();
+    };
+  }, [pricingSource, retryCount]);
+
+  const activeSourceInfo = PRICING_SOURCES.find((s) => s.id === pricingSource) || PRICING_SOURCES[0];
 
   const faqs = [
     {
       q: 'Can I switch products or upgrade my plan later?',
-      a: 'Yes! You can upgrade, downgrade, or add modules at any time. Prorated credits will be applied automatically to your invoice.'
+      a: 'Yes! You can upgrade, downgrade, or add modules at any time. Prorated credits will be applied automatically to your invoice.',
     },
     {
       q: 'Is there a free trial available for each marketplace module?',
-      a: 'Yes, we offer a 14-day full-featured free trial for Dezoryn Technologies, SchoolyCore, HMS, HRMS, and InventoryPro with no credit card required.'
+      a: 'Yes, we offer a 14-day full-featured free trial with no credit card required.',
     },
     {
-      q: 'How does the 20% annual discount work?',
-      a: 'When you choose annual billing, you receive an immediate 20% discount on every license seat across all product modules.'
+      q: 'How does annual billing work?',
+      a: 'Annual billing provides discounted yearly rates across configured pricing plans when paid upfront for a 12-month period.',
     },
     {
       q: 'Do you offer non-profit or educational institution discounts?',
-      a: 'We offer special volume licensing and up to 30% discounts for registered non-profits, schools, and healthcare institutions. Contact our sales team for details.'
-    }
+      a: 'We offer special volume licensing and discounts for registered non-profits, schools, and healthcare institutions. Contact our sales team for details.',
+    },
   ];
 
   return (
@@ -429,7 +197,9 @@ export const PricingPage: React.FC = () => {
             className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight mb-4"
           >
             Simple, Predictable Plans for <br />
-            <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-violet-600 dark:from-blue-500 dark:via-cyan-400 dark:to-violet-400 bg-clip-text text-transparent">Every Enterprise Module</span>
+            <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-violet-600 dark:from-blue-500 dark:via-cyan-400 dark:to-violet-400 bg-clip-text text-transparent">
+              Every Enterprise Module
+            </span>
           </motion.h1>
 
           <motion.p
@@ -438,7 +208,7 @@ export const PricingPage: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 font-normal"
           >
-            Choose your product module below to view tailored pricing options. No hidden fees, cancel anytime.
+            Select a backend pricing source below to view live API pricing options.
           </motion.p>
 
           {/* Monthly / Annual Billing Toggle */}
@@ -464,161 +234,197 @@ export const PricingPage: React.FC = () => {
               }`}
             >
               <span>Annual Billing</span>
-              <span className="px-2 py-0.5 rounded-full bg-cyan-400 text-slate-950 text-[10px] font-black uppercase">
-                SAVE 20%
-              </span>
             </button>
           </div>
         </div>
 
-        {/* ── CMS DYNAMIC PLANS ── */}
-        {cmsPlans.length > 0 && (
-          <div className="mb-16">
-            <div className="text-center mb-8">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/30 text-xs font-extrabold text-violet-600 dark:text-violet-400">
-                <Sparkles className="w-3.5 h-3.5" />Our Plans
-              </span>
-            </div>
-            <div className={`grid gap-6 ${cmsPlans.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto' : cmsPlans.length >= 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 max-w-sm mx-auto'}`}>
-              {cmsPlans.map((plan) => {
-                const grad = COLOR_GRADIENT[plan.colorTheme] || COLOR_GRADIENT.blue;
-                const ring = COLOR_RING[plan.colorTheme] || COLOR_RING.blue;
-                const badge = COLOR_BADGE[plan.colorTheme] || COLOR_BADGE.blue;
-                return (
-                  <motion.div key={plan.id}
-                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                    className={`relative flex flex-col rounded-3xl bg-white dark:bg-slate-900 border overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl ${plan.isHighlight ? `ring-2 ${ring} border-transparent shadow-xl` : 'border-slate-200 dark:border-slate-800'}`}>
-                    <div className={`h-1.5 w-full bg-gradient-to-r ${grad}`} />
-                    {plan.ribbon && (
-                      <div className={`absolute top-5 right-0 ${badge} text-white text-[10px] font-black px-3 py-1 rounded-l-lg shadow`}>
-                        {plan.ribbon}
-                      </div>
-                    )}
-                    <div className="p-7 flex flex-col gap-5 flex-1">
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-black text-slate-900 dark:text-white">{plan.name}</h3>
-                          {plan.isHighlight && <Star className="w-4 h-4 text-amber-400 fill-amber-400" />}
-                        </div>
-                        <div className={`text-3xl font-black bg-gradient-to-r ${grad} bg-clip-text text-transparent`}>{plan.price}</div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{plan.description}</p>
-                      </div>
-                      <div className="space-y-2.5 flex-1">
-                        {plan.features.map((feat, i) => (
-                          <div key={i} className="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300">
-                            <div className={`w-4 h-4 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center shrink-0`}>
-                              <Check className="w-2.5 h-2.5 text-white" />
-                            </div>
-                            {feat}
-                          </div>
-                        ))}
-                      </div>
-                      <button type="button"
-                        onClick={() => navigateTo(plan.buttonUrl as any)}
-                        className={`w-full py-3 rounded-2xl font-extrabold text-sm text-white bg-gradient-to-r ${grad} hover:opacity-90 transition flex items-center justify-center gap-2 shadow-md cursor-pointer`}>
-                        {plan.buttonText}<ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── MARKETPLACE PRODUCT SELECTOR TABS ── */}
-        <div className="flex items-center justify-center gap-2 sm:gap-4 mb-14 flex-wrap">
-          {marketplacePricingData.map((prod) => {
-            const isSelected = selectedProduct === prod.id;
+        {/* ── BACKEND PRICING SOURCE SELECTOR TABS ── */}
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mb-14 flex-wrap">
+          {PRICING_SOURCES.map((source) => {
+            const isSelected = pricingSource === source.id;
             return (
               <button
-                key={prod.id}
+                key={source.id}
                 type="button"
-                onClick={() => setSelectedProduct(prod.id)}
-                className={`px-4 py-3 rounded-2xl border flex items-center gap-2.5 transition duration-200 cursor-pointer ${
+                onClick={() => setPricingSource(source.id)}
+                className={`px-5 py-3.5 rounded-2xl border flex items-center gap-3 transition duration-200 cursor-pointer ${
                   isSelected
                     ? 'bg-white dark:bg-slate-900 border-blue-600 dark:border-cyan-400 text-slate-900 dark:text-white shadow-lg shadow-blue-500/10 dark:shadow-cyan-500/20 scale-105 font-extrabold'
                     : 'bg-white/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white font-semibold'
                 }`}
               >
-                <div className={`p-1.5 rounded-xl ${prod.accentBg}`}>
-                  {prod.icon}
+                <div className={`p-1.5 rounded-xl ${source.accentBg}`}>
+                  {source.icon}
                 </div>
-                <span className="text-xs">{prod.name}</span>
+                <div className="text-left">
+                  <span className="text-xs block leading-snug">{source.name}</span>
+                  <span className="text-[10px] text-slate-400 font-normal uppercase tracking-wider">
+                    {source.badge}
+                  </span>
+                </div>
               </button>
             );
           })}
         </div>
 
-        {/* ── PRICING CARDS FOR SELECTED PRODUCT ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          {activeProduct.tiers.map((tier, idx) => {
-            const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
-            const priceDisplay = typeof price === 'number' ? `$${price}` : price;
-            const periodDisplay = typeof price === 'number' ? (isAnnual ? '/user/mo (billed annually)' : '/user/month') : 'Billed Annually';
+        {/* ── PRICING CARDS / STATES ── */}
+        {error && plans.length === 0 ? (
+          /* API ERROR STATE */
+          <div className="py-16 text-center bg-white dark:bg-slate-900/60 border border-red-200 dark:border-red-500/30 rounded-3xl p-8 sm:p-12 shadow-sm mb-20 max-w-2xl mx-auto">
+            <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-7 h-7" />
+            </div>
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-2">
+              Unable to Load {activeSourceInfo.name} Plans
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
+              {error}
+            </p>
+            <button
+              type="button"
+              onClick={() => setRetryCount((c) => c + 1)}
+              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-md transition cursor-pointer inline-flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Retry Fetching</span>
+            </button>
+          </div>
+        ) : plans.length === 0 && !isFetching ? (
+          /* EMPTY STATE */
+          <div className="py-16 text-center bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 shadow-sm mb-20 max-w-xl mx-auto">
+            <div className="w-14 h-14 rounded-full bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4">
+              <Info className="w-7 h-7" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              No Plans Available
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+              There are currently no active plans returned by the {activeSourceInfo.name} service.
+            </p>
+            <button
+              type="button"
+              onClick={() => setRetryCount((c) => c + 1)}
+              className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+            >
+              Refresh Data
+            </button>
+          </div>
+        ) : (
+          /* SUCCESSFUL DATA RENDERING (Always display cards continuously) */
+          <div className={`grid grid-cols-1 ${plans.length === 1 ? 'max-w-md mx-auto' : plans.length === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' : 'md:grid-cols-3'} gap-8 mb-20 relative transition-opacity duration-300 ${isFetching ? 'opacity-75' : 'opacity-100'}`}>
+            {plans.map((plan, idx) => {
+              const rawPriceVal = isAnnual
+                ? plan.yearlyPrice !== undefined
+                  ? plan.yearlyPrice
+                  : plan.monthlyPrice
+                : plan.monthlyPrice;
 
-            return (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -4 }}
-                className={`p-8 rounded-3xl border flex flex-col justify-between relative transition duration-300 ${
-                  tier.isPopular
-                    ? 'bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 border-blue-600 dark:border-cyan-400 shadow-xl dark:shadow-2xl shadow-blue-500/10 dark:shadow-cyan-500/25 scale-105'
-                    : 'bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 shadow-sm'
-                }`}
-              >
-                {tier.isPopular && (
-                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-blue-600 dark:bg-cyan-400 text-white dark:text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-md">
-                    MOST POPULAR
-                  </span>
-                )}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">{tier.name}</h3>
-                    <span className="text-[10px] font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-widest">
-                      {activeProduct.badge}
-                    </span>
-                  </div>
+              const priceDisplay = formatPrice(rawPriceVal, plan.currency || '₹');
 
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">{tier.desc}</p>
+              const periodDisplay = priceDisplay !== 'Custom'
+                ? isAnnual
+                  ? plan.yearlyPrice !== undefined
+                    ? '/yr (billed annually)'
+                    : '/month'
+                  : '/month'
+                : 'Billed Annually';
 
-                  <div className="mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-                    <span className="text-4xl font-black text-slate-900 dark:text-white">{priceDisplay}</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 ml-1.5">{periodDisplay}</span>
-                  </div>
-
-                  <div className="space-y-3 mb-8">
-                    {tier.features.map((f, i) => (
-                      <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                        <Check className="w-4 h-4 text-blue-600 dark:text-cyan-400 shrink-0 mt-0.5" />
-                        <span>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => navigateTo(tier.ctaAction === 'contact' ? '/contact-sales' : '/book-demo')}
-                  className={`w-full py-3.5 rounded-xl font-extrabold text-xs transition cursor-pointer flex items-center justify-center gap-2 ${
-                    tier.isPopular
-                      ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/30'
-                      : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700'
+              return (
+                <motion.div
+                  key={plan.id || idx}
+                  whileHover={{ y: -4 }}
+                  className={`p-8 rounded-3xl border flex flex-col justify-between relative transition duration-300 ${
+                    plan.isPopular
+                      ? 'bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 border-blue-600 dark:border-cyan-400 shadow-xl dark:shadow-2xl shadow-blue-500/10 dark:shadow-cyan-500/25 scale-105'
+                      : 'bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 shadow-sm'
                   }`}
                 >
-                  <span>{tier.ctaText}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </motion.div>
-            );
-          })}
-        </div>
+                  {plan.isPopular && (
+                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-blue-600 dark:bg-cyan-400 text-white dark:text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-md">
+                      MOST POPULAR
+                    </span>
+                  )}
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                        {plan.name}
+                      </h3>
+                      <span className="text-[10px] font-bold text-blue-600 dark:text-cyan-400 uppercase tracking-widest">
+                        {activeSourceInfo.badge}
+                      </span>
+                    </div>
+
+                    {plan.description && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+                        {plan.description}
+                      </p>
+                    )}
+
+                    <div className="mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+                      <span className="text-4xl font-black text-slate-900 dark:text-white">
+                        {priceDisplay}
+                      </span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 ml-1.5">
+                        {periodDisplay}
+                      </span>
+                    </div>
+
+                    {/* Feature list */}
+                    {plan.features.length > 0 && (
+                      <div className="space-y-3 mb-6">
+                        {plan.features.map((f, i) => (
+                          <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                            <Check className="w-4 h-4 text-blue-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+                            <span>{f}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 mt-4">
+                    {/* Main CTA */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigateTo(plan.ctaAction === 'contact' ? '/contact-sales' : '/book-demo')
+                      }
+                      className={`w-full py-3.5 rounded-xl font-extrabold text-xs transition cursor-pointer flex items-center justify-center gap-2 ${
+                        plan.isPopular
+                          ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-lg shadow-blue-500/20 dark:shadow-cyan-500/30'
+                          : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700'
+                      }`}
+                    >
+                      <span>{plan.ctaLabel || 'Get Started'}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+
+                    {/* View Details API trigger */}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPlanId(plan.id)}
+                      className="w-full py-2 text-[11px] font-bold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-cyan-400 transition cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <InfoIcon className="w-3.5 h-3.5" />
+                      <span>View Specifications</span>
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
 
         {/* ── FEATURE MATRIX COMPARISON TABLE ── */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 lg:p-12 mb-20 shadow-xl overflow-x-auto">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-xs font-extrabold tracking-wider text-blue-600 dark:text-cyan-400 uppercase">FEATURE COMPARISON</span>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Full Module Capabilities</h3>
+            <span className="text-xs font-extrabold tracking-wider text-blue-600 dark:text-cyan-400 uppercase">
+              FEATURE COMPARISON
+            </span>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+              Full Module Capabilities
+            </h3>
           </div>
 
           <table className="w-full text-left text-xs border-collapse min-w-[600px]">
@@ -710,7 +516,7 @@ export const PricingPage: React.FC = () => {
               onClick={() => navigateTo('/contact-sales')}
               className="px-8 py-4 rounded-full bg-white text-blue-600 font-extrabold text-sm shadow-xl hover:bg-slate-100 transition cursor-pointer flex items-center gap-2 border-none"
             >
-              <span>Contact Sales Team</span>
+              <span>Contact Us</span>
               <ArrowRight className="w-4 h-4 text-blue-600" />
             </button>
             <button
@@ -724,6 +530,16 @@ export const PricingPage: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Reusable Plan Detail Modal with Enforced 2.5s Loader */}
+      <PlanDetailsModal
+        planId={selectedPlanId}
+        source={pricingSource}
+        onClose={() => setSelectedPlanId(null)}
+        onSelectPlan={(p) => {
+          navigateTo(p.ctaAction === 'contact' ? '/contact-sales' : '/book-demo');
+        }}
+      />
     </div>
   );
 };
